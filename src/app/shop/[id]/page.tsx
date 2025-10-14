@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, use } from "react";
 import { Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,10 +10,11 @@ import Footer from "@/components/Footer";
 import { products } from "@/lib/products";
 import { notFound } from "next/navigation";
 
-export default function ProductDetailPage({ params }: { params: { id: string } }) {
+export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const [quantity, setQuantity] = useState(1);
+  const resolvedParams = use(params);
 
-  const product = products.find((p) => p.id === parseInt(params.id));
+  const product = products.find((p) => p.id === parseInt(resolvedParams.id));
 
   if (!product) {
     notFound();
