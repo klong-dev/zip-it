@@ -1,103 +1,167 @@
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import Image from "next/image";
+import Link from "next/link";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import ProductCard from "@/components/ProductCard";
+import { products } from "@/lib/products";
 
-export default function Home() {
+export default function ZipLandingPage() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="min-h-screen">
+      <Header />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      {/* Hero Section */}
+      <section className="bg-[#bbbbbb] py-20 relative">
+        <div className="container mx-auto px-4 text-center">
+          <h1 className="text-white text-4xl md:text-5xl font-bold mb-6 tracking-wide">ZIP IT YOUR WAY</h1>
+
+          <div className="flex justify-center mb-8">
+            <img className="max-h-36 pt-2" src="/chuZipDo.png" alt="" />
+          </div>
+
+          <div className="flex items-center justify-center gap-4 mb-8">
+            <div className="h-px bg-white w-24 md:w-32" />
+            <h2 className="text-white text-2xl md:text-3xl font-semibold tracking-wide">PROTECT THE ENVIRONMENT</h2>
+            <div className="h-px bg-white w-24 md:w-32" />
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-4 mb-12">
+            <Button variant="outline" className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-[#980b15] transition-all uppercase text-sm px-6">
+              VIEW PRODUCT
+            </Button>
+            <Button variant="outline" className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-[#980b15] transition-all uppercase text-sm px-6">
+              VIEW SERVICES
+            </Button>
+          </div>
+
+          {/* Carousel Dots */}
+          <div className="flex justify-center gap-3">
+            <div className="w-4 h-4 rounded-full bg-white" />
+            <div className="w-4 h-4 rounded-full bg-white/50" />
+            <div className="w-4 h-4 rounded-full bg-white/50" />
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </section>
+
+      {/* Welcome Section */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
+            {/* Left - Illustration */}
+            <div className="relative">
+              <img src="/illustrated-coffee-cups-with-red-grid-pattern-and-.jpg" alt="Sustainable coffee cups illustration" className="w-full h-auto" />
+            </div>
+
+            {/* Right - Content */}
+            <div>
+              <h2 className="text-4xl font-bold mb-6 text-[#111111]">WELCOME TO ZIP</h2>
+              <p className="text-[#74787c] leading-relaxed mb-6">Stylish sustainable living — replace single-use plastics with durable, personalized fabric carriers that reflect your unique style. With aesthetic and practical design, these eco-friendly choices make green living modern, youthful, and accessible.</p>
+              <Button className="bg-[#980b15] hover:bg-[#2c0606] text-white uppercase text-sm px-6">ZIP IT YOUR WAY</Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Services Section */}
+      <section className="py-16 bg-[#ececec]">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <div className="inline-block bg-[#980b15] text-white text-xs uppercase px-3 py-1 mb-4">OUR SERVICES</div>
+            <h2 className="text-4xl font-bold text-[#111111]">OUR BRAND SERVICE</h2>
+            <div className="flex justify-center gap-2 mt-4">
+              <div className="w-2 h-2 rounded-full bg-[#980b15]" />
+              <div className="w-2 h-2 rounded-full bg-[#980b15]" />
+              <div className="w-2 h-2 rounded-full bg-[#980b15]" />
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            {/* Embroidery Service */}
+            <Card className="bg-white p-6 hover:shadow-lg transition-shadow">
+              <div className="mb-4">
+                <img src="/embroidery-machine-working-on-fabric-with-colorful.jpg" alt="Embroidery service" className="w-full h-48 object-cover rounded" />
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-[#111111]">EMBROIDERY SERVICE</h3>
+              <p className="text-[#74787c] text-sm mb-4 leading-relaxed">Share your love through every stitch — small with us, deeply meaningful, tailored to last.</p>
+              <Button variant="outline" className="border-[#980b15] text-[#980b15] hover:bg-[#980b15] hover:text-white uppercase text-xs bg-transparent">
+                READ MORE →
+              </Button>
+            </Card>
+
+            {/* Printing Service */}
+            <Card className="bg-white p-6 hover:shadow-lg transition-shadow">
+              <div className="mb-4">
+                <img src="/screen-printing-process-on-fabric-with-purple-desi.jpg" alt="Printing service" className="w-full h-48 object-cover rounded" />
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-[#111111]">PRINTING SERVICE</h3>
+              <p className="text-[#74787c] text-sm mb-4 leading-relaxed">Our designs are green—bringing your ideas to life.</p>
+              <Button variant="outline" className="border-[#980b15] text-[#980b15] hover:bg-[#980b15] hover:text-white uppercase text-xs bg-transparent">
+                READ MORE →
+              </Button>
+            </Card>
+
+            {/* Design Services */}
+            <Card className="bg-white p-6 hover:shadow-lg transition-shadow">
+              <div className="mb-4 flex items-center justify-center h-48 bg-white">
+                <img src="/chuZipDo.png" alt="" />
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-[#111111]">DESIGN SERVICES</h3>
+              <p className="text-[#74787c] text-sm mb-4 leading-relaxed">Why don't you create exactly — we design meaningful experiences that reflect your values, tell your story, and help you make a real difference.</p>
+              <Button variant="outline" className="border-[#980b15] text-[#980b15] hover:bg-[#980b15] hover:text-white uppercase text-xs bg-transparent">
+                READ MORE →
+              </Button>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Products Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          {/* Section Header */}
+          <div className="mb-12">
+            <div className="inline-block bg-[#980b15] text-white text-xs font-semibold uppercase px-4 py-1.5 mb-4">PRODUCTS</div>
+            <h2 className="text-4xl md:text-5xl font-bold text-[#111111] mb-8">PRODUCTS FROM US</h2>
+
+            {/* Category Filters */}
+            <div className="flex flex-wrap gap-3">
+              <Button variant="outline" className="border-2 border-[#980b15] bg-[#980b15] text-white hover:bg-[#7a0911] hover:border-[#7a0911] uppercase text-xs font-semibold px-6 py-2.5 rounded-none transition-all">
+                ALL
+              </Button>
+              <Button variant="outline" className="border border-[#d9d9d9] text-[#74787c] hover:bg-[#f5f5f5] hover:border-[#980b15] uppercase text-xs font-medium px-6 py-2.5 bg-transparent rounded-none transition-all">
+                CUP HOLDER
+              </Button>
+              <Button variant="outline" className="border border-[#d9d9d9] text-[#74787c] hover:bg-[#f5f5f5] hover:border-[#980b15] uppercase text-xs font-medium px-6 py-2.5 bg-transparent rounded-none transition-all">
+                CANVAS TOTE
+              </Button>
+              <Button variant="outline" className="border border-[#d9d9d9] text-[#74787c] hover:bg-[#f5f5f5] hover:border-[#980b15] uppercase text-xs font-medium px-6 py-2.5 bg-transparent rounded-none transition-all">
+                COSMETIC BAG
+              </Button>
+              <Button variant="outline" className="border border-[#d9d9d9] text-[#74787c] hover:bg-[#f5f5f5] hover:border-[#980b15] uppercase text-xs font-medium px-6 py-2.5 bg-transparent rounded-none transition-all">
+                PEN CASE
+              </Button>
+            </div>
+          </div>
+
+          {/* Product Grid - Display first 8 products */}
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
+            {products.slice(0, 8).map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+
+          {/* View All Button */}
+          <div className="flex justify-center">
+            <Link href="/shop">
+              <Button className="bg-[#980b15] hover:bg-[#7a0911] text-white uppercase font-semibold px-10 py-6 text-sm rounded-none shadow-lg hover:shadow-xl transition-all">VIEW ALL PRODUCTS →</Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
     </div>
   );
 }
