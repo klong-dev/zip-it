@@ -4,7 +4,7 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-12">
         {/* Get In Touch */}
         <div>
-          <h3 className="text-xl font-bold mb-6 pb-2 border-b-2 border-[#ffffff] inline-block">GET IN TOUCH</h3>
+          <h3 className="text-xl font-bold mb-6 pb-2 border-b-2 border-[#ffffff] inline-block">LIÊN HỆ</h3>
           <div className="space-y-2 text-sm">
             <p>Thu Duc, Ho Chi Minh City</p>
             <p>+84866615063</p>
@@ -14,8 +14,8 @@ export default function Footer() {
 
         {/* Working Hours */}
         <div>
-          <h3 className="text-xl font-bold mb-6 pb-2 border-b-2 border-[#ffffff] inline-block">WORKING HOURS</h3>
-          <p className="text-sm">All Week 06:00 - 23:00</p>
+          <h3 className="text-xl font-bold mb-6 pb-2 border-b-2 border-[#ffffff] inline-block">KHUNG GIỜ LÀM VIỆC</h3>
+          <p className="text-sm">Tất cả các ngày từ 6:00 - 23:00</p>
         </div>
 
         {/* Social Media */}

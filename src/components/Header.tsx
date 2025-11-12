@@ -1,12 +1,18 @@
+"use client";
+
 import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
+import { useCart } from "@/contexts/CartContext";
 
 export default function Header() {
+  const { getTotalItems } = useCart();
+  const totalItems = getTotalItems();
+
   return (
     <>
       {/* Top Icon Bar */}
       <div className="bg-[#f6f6f6] pt-2 flex justify-center">
-        <img className="max-h-20" src="/chuI.png" alt="chu I" />
+        <img className="max-h-20" src="/chuZipDo.png" alt="chu ZIP Do" />
       </div>
 
       {/* Header Navigation */}
@@ -21,16 +27,16 @@ export default function Header() {
             {/* Navigation */}
             <nav className="hidden md:flex items-center gap-8">
               <Link href="/" className="hover:opacity-80 transition-opacity font-medium">
-                HOME
+                TRANG CHỦ
               </Link>
               <Link href="/shop" className="hover:opacity-80 transition-opacity font-medium">
-                PRODUCTS
+                SẢN PHẨM
               </Link>
               <Link href="/services" className="hover:opacity-80 transition-opacity font-medium">
-                SERVICES
+                DỊCH VỤ CỦA CHÚNG TÔI
               </Link>
               <Link href="#contact" className="hover:opacity-80 transition-opacity font-medium">
-                CONTACT
+                LIÊN HỆ
               </Link>
             </nav>
 
@@ -39,8 +45,9 @@ export default function Header() {
               <div className="hidden lg:flex items-center gap-2 text-sm">
                 <span>Hotline: 0945000334</span>
               </div>
-              <Link href="/cart" className="hover:opacity-80 transition-opacity">
+              <Link href="/cart" className="hover:opacity-80 transition-opacity relative">
                 <ShoppingCart className="w-6 h-6" />
+                {totalItems > 0 && <span className="absolute -top-2 -right-2 bg-white text-[#980b15] text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">{totalItems > 9 ? "9+" : totalItems}</span>}
               </Link>
             </div>
           </div>

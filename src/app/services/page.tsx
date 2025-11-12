@@ -12,20 +12,20 @@ export default function ServicesPage() {
       <div className="bg-[#d9d9d9] py-20 px-6 relative overflow-hidden">
         <div className="absolute inset-0 flex items-center justify-center opacity-10">
           <h2 className="text-[#ffffff] text-[120px] font-bold tracking-wider" style={{ WebkitTextStroke: "2px #ffffff" }}>
-            OUR SERVICES
+            DỊCH VỤ CỦA CHÚNG TÔI
           </h2>
         </div>
         <div className="relative z-10 text-center">
-          <h1 className="text-[#ffffff] text-5xl font-bold mb-4">SERVICES PAGE</h1>
-          <p className="text-[#ffffff] text-sm">HOME / SERVICES PAGE</p>
+          <h1 className="text-[#ffffff] text-5xl font-bold mb-4">DỊCH VỤ CỦA CHÚNG TÔI</h1>
+          <p className="text-[#ffffff] text-sm">TRANG CHỦ / DỊCH VỤ CỦA CHÚNG TÔI</p>
         </div>
       </div>
 
       {/* Services Section */}
       <div className="max-w-6xl mx-auto py-20 px-6">
         <div className="text-center mb-16">
-          <button className="bg-[#980b15] text-[#ffffff] px-6 py-2 text-sm font-medium mb-4">MAKE YOUR IDEA</button>
-          <h2 className="text-[#111111] text-4xl font-bold mb-4">SERVICES</h2>
+          <button className="bg-[#980b15] text-[#ffffff] px-6 py-2 text-sm font-medium mb-4">HIỆN THỰC HÓA Ý TƯỞNG CỦA BẠN</button>
+          <h2 className="text-[#111111] text-4xl font-bold mb-4">DỊCH VỤ</h2>
           <div className="flex justify-center gap-2">
             <div className="w-2 h-2 rounded-full bg-[#980b15]" />
             <div className="w-2 h-2 rounded-full bg-[#980b15]" />
@@ -43,13 +43,13 @@ export default function ServicesPage() {
             <div className="flex items-center gap-4 mb-4">
               <div className="w-10 h-10 rounded-full bg-[#d9d9d9]" />
               <div className="flex items-center gap-4 text-sm text-[#999999]">
-                <span className="text-[#111111] font-medium">BEST CHOICE</span>
-                <span>2 COMMENT</span>
+                <span className="text-[#111111] font-medium">LỰA CHỌN TỐT NHẤT</span>
+                <span>2 BÌNH LUẬN</span>
               </div>
             </div>
-            <h3 className="text-[#111111] text-2xl font-bold mb-6">EMBROIDERY SERVICE</h3>
+            <h3 className="text-[#111111] text-2xl font-bold mb-6">DỊCH VỤ THÊU</h3>
             <Button variant="outline" className="border-[#111111] text-[#111111] hover:bg-[#111111] hover:text-[#ffffff] bg-transparent">
-              READ MORE →
+              ĐỌC THÊM →
             </Button>
           </div>
 
@@ -62,12 +62,12 @@ export default function ServicesPage() {
               <div className="w-10 h-10 rounded-full bg-[#d9d9d9]" />
               <div className="flex items-center gap-4 text-sm text-[#999999]">
                 <span className="text-[#111111] font-medium">MARKUS DANIEL</span>
-                <span>2 COMMENT</span>
+                <span>2 BÌNH LUẬN</span>
               </div>
             </div>
-            <h3 className="text-[#111111] text-2xl font-bold mb-6">PRINTING SERVICE</h3>
+            <h3 className="text-[#111111] text-2xl font-bold mb-6">DỊCH VỤ IN ẤN</h3>
             <Button variant="outline" className="border-[#111111] text-[#111111] hover:bg-[#111111] hover:text-[#ffffff] bg-transparent">
-              READ MORE →
+              ĐỌC THÊM →
             </Button>
           </div>
         </div>
