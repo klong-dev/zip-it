@@ -6,8 +6,9 @@ import Footer from "@/components/Footer";
 import Link from "next/link";
 import { XCircle } from "lucide-react";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-export default function PaymentFailedPage() {
+function PaymentFailedContent() {
   const searchParams = useSearchParams();
 
   // Lấy thông tin từ query params
@@ -76,5 +77,19 @@ export default function PaymentFailedPage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function PaymentFailedPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="w-16 h-16 border-4 border-[#980b15] border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      }
+    >
+      <PaymentFailedContent />
+    </Suspense>
   );
 }
