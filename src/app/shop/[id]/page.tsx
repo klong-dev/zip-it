@@ -207,7 +207,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             </TabsList>
             <TabsContent value="description" className="mt-8 text-[#74787c] space-y-4">
               <h3 className="text-[#111111] text-xl font-semibold">{product.name}</h3>
-              <p className="leading-relaxed">{product.detailedDescription || product.description}</p>
+              <p className="leading-relaxed" style={{ whiteSpace: "pre-line" }}>
+                {product.detailedDescription || product.description}
+              </p>
             </TabsContent>
             <TabsContent value="additional" className="mt-8 text-[#74787c]">
               <div className="space-y-2">
