@@ -208,7 +208,7 @@ export default function AdminDashboardPage() {
             </div>
 
             {/* Warning: Low Stock */}
-            {stats?.products.outOfStockProducts > 0 && (
+            {stats && stats.products.outOfStockProducts > 0 && (
               <Card className="p-6 bg-yellow-50 border-yellow-200 mb-8">
                 <div className="flex items-center gap-3">
                   <AlertTriangle className="w-6 h-6 text-yellow-600" />

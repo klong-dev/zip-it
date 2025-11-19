@@ -3,7 +3,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { productsAPI, Product as APIProduct, Category } from "@/lib/apiService";
 import { Button } from "@/components/ui/button";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -37,7 +37,7 @@ const convertAPIProductToLocal = (apiProduct: APIProduct): LocalProduct => ({
   tags: apiProduct.tags,
 });
 
-export default function ShopPage() {
+function ShopContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [products, setProducts] = useState<LocalProduct[]>([]);
@@ -260,5 +260,19 @@ export default function ShopPage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function ShopPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-[#f6f6f6]">
+          <div className="w-16 h-16 border-4 border-[#980b15] border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      }
+    >
+      <ShopContent />
+    </Suspense>
   );
 }

@@ -94,7 +94,9 @@ export default function CheckoutPage() {
         localStorage.setItem("pendingOrderCode", response.data.orderCode.toString());
 
         // Redirect đến PayOS payment page
-        window.location.href = response.data.paymentUrl;
+        if (typeof window !== "undefined") {
+          window.location.href = response.data.paymentUrl;
+        }
       } else {
         toast.error("Không thể tạo liên kết thanh toán. Vui lòng thử lại!");
         setIsProcessing(false);
