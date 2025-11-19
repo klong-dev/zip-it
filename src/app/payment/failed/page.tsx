@@ -53,7 +53,7 @@ function PaymentFailedContent() {
               - Đảm bảo có đủ số dư
               <br />
               - Liên hệ ngân hàng nếu vấn đề vẫn tiếp diễn
-              <br />- Hotline: 0945000334
+              <br />- Hotline: 0834946906
             </p>
           </div>
 

@@ -35,7 +35,7 @@ export default function Header() {
               <Link href="/services" className="hover:opacity-80 transition-opacity font-medium">
                 DỊCH VỤ CỦA CHÚNG TÔI
               </Link>
-              <Link href="#contact" className="hover:opacity-80 transition-opacity font-medium">
+              <Link href="/contact" className="hover:opacity-80 transition-opacity font-medium">
                 LIÊN HỆ
               </Link>
             </nav>
@@ -43,7 +43,7 @@ export default function Header() {
             {/* Right Section */}
             <div className="flex items-center gap-6">
               <div className="hidden lg:flex items-center gap-2 text-sm">
-                <span>Hotline: 0945000334</span>
+                <span>Hotline: 0834946906</span>
               </div>
               <Link href="/cart" className="hover:opacity-80 transition-opacity relative">
                 <ShoppingCart className="w-6 h-6" />

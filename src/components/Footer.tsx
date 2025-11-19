@@ -1,3 +1,5 @@
+import { Facebook, Instagram } from "lucide-react";
+
 export default function Footer() {
   return (
     <footer className="bg-[#980b15] text-[#ffffff] py-12 px-6">
@@ -7,8 +9,8 @@ export default function Footer() {
           <h3 className="text-xl font-bold mb-6 pb-2 border-b-2 border-[#ffffff] inline-block">LIÊN HỆ</h3>
           <div className="space-y-2 text-sm">
             <p>Thu Duc, Ho Chi Minh City</p>
-            <p>+84866615063</p>
-            <p>zip_funi@gmail.com</p>
+            <p>0834946906</p>
+            <p>funizip123@gmail.com</p>
           </div>
         </div>
 
@@ -21,12 +23,12 @@ export default function Footer() {
         {/* Social Media */}
         <div>
           <div className="flex gap-4 mb-4">
-            <div className="w-10 h-10 rounded-full bg-[#ffffff] flex items-center justify-center">
-              <span className="text-[#980b15] font-bold">f</span>
-            </div>
-            <div className="w-10 h-10 rounded-full bg-[#ffffff] flex items-center justify-center">
-              <span className="text-[#980b15] font-bold">in</span>
-            </div>
+            <a href="https://www.facebook.com/profile.php?id=61582769884167" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-[#ffffff] flex items-center justify-center hover:bg-[#f0f0f0] transition-colors">
+              <Facebook className="w-5 h-5 text-[#980b15]" />
+            </a>
+            <a href="https://www.instagram.com/zip.ityourway/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-[#ffffff] flex items-center justify-center hover:bg-[#f0f0f0] transition-colors">
+              <Instagram className="w-5 h-5 text-[#980b15]" />
+            </a>
           </div>
           <p className="text-sm">@zip_ityourway</p>
         </div>

@@ -316,3 +316,349 @@ export const userAPI = {
     return response.data;
   },
 };
+
+// ==================== ADMIN APIs ====================
+export interface AdminLoginData {
+  email: string;
+  password: string;
+}
+
+export interface AdminAuthResponse {
+  accessToken: string;
+  user: {
+    id: number;
+    email: string;
+    name: string;
+    role: string;
+  };
+}
+
+export interface AdminProduct {
+  id: number;
+  name: string;
+  slug: string;
+  sku: string;
+  price: number;
+  priceFormatted: string;
+  image: string;
+  images: string[];
+  category: string;
+  description: string;
+  detailedDescription: string;
+  stock: number;
+  inStock: boolean;
+  rating: number;
+  reviews: number;
+  tags: string[];
+  specifications: any;
+  customizationOptions: any[];
+  relatedProducts: number[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AdminProductsFilters {
+  category?: string;
+  search?: string;
+  inStock?: boolean;
+}
+
+export interface AdminProductsResponse {
+  success: boolean;
+  data: {
+    products: AdminProduct[];
+    pagination: {
+      currentPage: number;
+      totalPages: number;
+      totalItems: number;
+    };
+  };
+}
+
+export interface CreateProductData {
+  name: string;
+  price: number;
+  category: string;
+  stock: number;
+  description?: string;
+  detailedDescription?: string;
+  tags?: string;
+  specifications?: string;
+  customizationOptions?: string;
+  relatedProducts?: string;
+  rating?: number;
+  reviews?: number;
+  images?: File[];
+}
+
+export interface UpdateProductData {
+  name?: string;
+  price?: number;
+  stock?: number;
+  inStock?: boolean;
+  description?: string;
+  detailedDescription?: string;
+  category?: string;
+  tags?: string;
+  specifications?: string;
+  customizationOptions?: string;
+  relatedProducts?: string;
+}
+
+export interface AdminOrder {
+  id: number;
+  orderNumber: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  totalPayment: number;
+  status: string;
+  paymentStatus: string;
+  paymentMethod: string;
+  createdAt: string;
+  items: Array<{
+    id: number;
+    productName: string;
+    quantity: number;
+    price: number;
+    subtotal: number;
+  }>;
+  user?: {
+    id: number;
+    email: string;
+    name: string;
+  };
+}
+
+export interface AdminOrderDetail {
+  id: number;
+  orderNumber: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  shippingAddress: {
+    address: string;
+    district: string;
+    province: string;
+  };
+  note?: string;
+  subtotal: number;
+  shippingFee: number;
+  discount: number;
+  totalPayment: number;
+  status: string;
+  paymentStatus: string;
+  paymentMethod: string;
+  transactionId?: string;
+  paidAt?: string;
+  createdAt: string;
+  items: Array<{
+    id: number;
+    productId: number;
+    productName: string;
+    quantity: number;
+    price: number;
+    subtotal: number;
+    customization?: any;
+    product: {
+      id: number;
+      name: string;
+      image: string;
+    };
+  }>;
+}
+
+export interface AdminOrdersFilters {
+  status?: string;
+  paymentStatus?: string;
+  fromDate?: string;
+  toDate?: string;
+  search?: string;
+}
+
+export interface OrderStatistics {
+  totalOrders: number;
+  paidOrders: number;
+  totalRevenue: number;
+  statusCounts: Array<{
+    status: string;
+    count: number;
+  }>;
+}
+
+export interface DashboardStats {
+  orders: {
+    totalOrders: number;
+    paidOrders: number;
+    totalRevenue: number;
+    statusCounts: Array<{
+      status: string;
+      count: number;
+    }>;
+  };
+  products: {
+    totalProducts: number;
+    inStockProducts: number;
+    outOfStockProducts: number;
+    categories: Array<{
+      category: string;
+      count: number;
+      percentage: number;
+    }>;
+    averagePrice: number;
+  };
+  users: {
+    totalUsers: number;
+    usersByRole: Array<{
+      role: string;
+      count: number;
+    }>;
+    newUsersLast30Days: number;
+  };
+}
+
+export interface RevenueAnalytics {
+  totalRevenue: number;
+  totalOrders: number;
+  averageOrderValue: number;
+  period: {
+    type: string;
+    fromDate: string;
+    toDate: string;
+  };
+  revenueByPaymentMethod: Array<{
+    paymentMethod: string;
+    revenue: number;
+    orderCount: number;
+    percentage: number;
+  }>;
+}
+
+export interface ProductStatistics {
+  totalProducts: number;
+  inStockProducts: number;
+  outOfStockProducts: number;
+  categories: Array<{
+    category: string;
+    count: number;
+    percentage: number;
+  }>;
+  averagePrice: number;
+  priceRanges: Array<{
+    range: string;
+    count: number;
+  }>;
+  topRatedProducts: Array<{
+    id: number;
+    name: string;
+    rating: number;
+    reviews: number;
+    price: number;
+  }>;
+}
+
+export const adminAPI = {
+  // Auth
+  login: async (data: AdminLoginData): Promise<AdminAuthResponse> => {
+    console.log("Admin login request data:", data);
+    const response = await api.post("/admin/auth/login", data);
+    console.log("Admin login response:", response);
+    console.log("Admin login response.data:", response.data);
+    return response.data;
+  },
+
+  // Products
+  products: {
+    getAll: async (filters?: AdminProductsFilters): Promise<AdminProductsResponse> => {
+      const response = await api.get("/admin/products", { params: filters });
+      return response.data;
+    },
+
+    getById: async (id: number): Promise<AdminProduct> => {
+      const response = await api.get(`/admin/products/${id}`);
+      return response.data;
+    },
+
+    create: async (data: FormData): Promise<AdminProduct> => {
+      const response = await api.post("/admin/products", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data;
+    },
+
+    update: async (id: number, data: UpdateProductData): Promise<AdminProduct> => {
+      const response = await api.put(`/admin/products/${id}`, data);
+      return response.data;
+    },
+
+    updateStock: async (id: number, stock: number, inStock: boolean): Promise<AdminProduct> => {
+      const response = await api.put(`/admin/products/${id}/stock`, { stock, inStock });
+      return response.data;
+    },
+
+    delete: async (id: number): Promise<{ success: boolean; message: string }> => {
+      const response = await api.delete(`/admin/products/${id}`);
+      return response.data;
+    },
+  },
+
+  // Orders
+  orders: {
+    getAll: async (filters?: AdminOrdersFilters): Promise<AdminOrder[]> => {
+      const response = await api.get("/admin/orders", { params: filters });
+      return response.data;
+    },
+
+    getById: async (id: number): Promise<AdminOrderDetail> => {
+      const response = await api.get(`/admin/orders/${id}`);
+      return response.data;
+    },
+
+    updateStatus: async (id: number, status: string, note?: string): Promise<AdminOrderDetail> => {
+      const response = await api.put(`/admin/orders/${id}/status`, { status, note });
+      return response.data;
+    },
+
+    delete: async (id: number): Promise<{ success: boolean; message: string }> => {
+      const response = await api.delete(`/admin/orders/${id}`);
+      return response.data;
+    },
+
+    getStatistics: async (): Promise<OrderStatistics> => {
+      const response = await api.get("/admin/orders/statistics");
+      return response.data;
+    },
+  },
+
+  // Statistics
+  statistics: {
+    getDashboard: async (): Promise<DashboardStats> => {
+      const response = await api.get("/admin/statistics/dashboard");
+      return response.data;
+    },
+
+    getRevenue: async (period?: string, fromDate?: string, toDate?: string): Promise<RevenueAnalytics> => {
+      const response = await api.get("/admin/statistics/revenue", {
+        params: { period, fromDate, toDate },
+      });
+      return response.data;
+    },
+
+    getProducts: async (): Promise<ProductStatistics> => {
+      const response = await api.get("/admin/statistics/products");
+      return response.data;
+    },
+
+    getTopProducts: async (limit = 10): Promise<AdminProduct[]> => {
+      const response = await api.get("/admin/statistics/top-products", { params: { limit } });
+      return response.data;
+    },
+
+    getLowStock: async (threshold = 10): Promise<AdminProduct[]> => {
+      const response = await api.get("/admin/statistics/low-stock", { params: { threshold } });
+      return response.data;
+    },
+  },
+};

@@ -40,17 +40,7 @@ export default function ServicesPage() {
             <div className="relative h-64 mb-6">
               <Image src="/embroidery-machine-with-colorful-threads.jpg" alt="Embroidery Service" fill className="object-cover" />
             </div>
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-10 h-10 rounded-full bg-[#d9d9d9]" />
-              <div className="flex items-center gap-4 text-sm text-[#999999]">
-                <span className="text-[#111111] font-medium">LỰA CHỌN TỐT NHẤT</span>
-                <span>2 BÌNH LUẬN</span>
-              </div>
-            </div>
             <h3 className="text-[#111111] text-2xl font-bold mb-6">DỊCH VỤ THÊU</h3>
-            <Button variant="outline" className="border-[#111111] text-[#111111] hover:bg-[#111111] hover:text-[#ffffff] bg-transparent">
-              ĐỌC THÊM →
-            </Button>
           </div>
 
           {/* Printing Service Card */}
@@ -58,17 +48,7 @@ export default function ServicesPage() {
             <div className="relative h-64 mb-6">
               <Image src="/screen-printing-machine-with-purple-design.jpg" alt="Printing Service" fill className="object-cover" />
             </div>
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-10 h-10 rounded-full bg-[#d9d9d9]" />
-              <div className="flex items-center gap-4 text-sm text-[#999999]">
-                <span className="text-[#111111] font-medium">MARKUS DANIEL</span>
-                <span>2 BÌNH LUẬN</span>
-              </div>
-            </div>
             <h3 className="text-[#111111] text-2xl font-bold mb-6">DỊCH VỤ IN ẤN</h3>
-            <Button variant="outline" className="border-[#111111] text-[#111111] hover:bg-[#111111] hover:text-[#ffffff] bg-transparent">
-              ĐỌC THÊM →
-            </Button>
           </div>
         </div>
       </div>

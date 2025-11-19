@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { authAPI } from "@/lib/apiService";
+import { adminAPI } from "@/lib/apiService";
 import { Lock, Mail } from "lucide-react";
 
 export default function AdminLoginPage() {
@@ -34,21 +34,34 @@ export default function AdminLoginPage() {
     setIsLoading(true);
 
     try {
-      const response = await authAPI.login(formData);
+      console.log("🔐 Attempting admin login with:", formData.email);
+      const response = await adminAPI.login(formData);
+      console.log("✅ Login response received:", response);
 
-      // Lưu token vào localStorage
-      localStorage.setItem("admin_token", response.access_token);
+      // Lưu token vào localStorage và cookies
+      localStorage.setItem("admin_token", response.accessToken);
       localStorage.setItem("admin_user", JSON.stringify(response.user));
 
-      toast.success("Đăng nhập thành công!");
+      // Set cookie for middleware
+      document.cookie = `admin_token=${response.accessToken}; path=/; max-age=${7 * 24 * 60 * 60}`; // 7 days
+
+      toast.success(`Xin chào ${response.user.name}! Đăng nhập thành công.`);
 
       // Redirect đến trang admin dashboard
       router.push("/admin/dashboard");
     } catch (error: any) {
-      console.error("Login error:", error);
+      console.error("❌ Login error:", error);
+      console.error("Error details:", {
+        message: error.message,
+        response: error.response,
+        request: error.request,
+        config: error.config,
+      });
 
       if (error.response?.status === 401) {
         toast.error("Email hoặc mật khẩu không đúng!");
+      } else if (error.response?.status === 403) {
+        toast.error("Bạn không có quyền truy cập trang quản trị!");
       } else if (error.response?.data?.message) {
         toast.error(error.response.data.message);
       } else {
@@ -98,6 +111,7 @@ export default function AdminLoginPage() {
 
         <div className="mt-6 text-center">
           <p className="text-sm text-[#74787c]">Chỉ dành cho quản trị viên</p>
+          <p className="text-xs text-[#74787c] mt-2">Tài khoản mặc định: admin@zipit.com</p>
         </div>
       </div>
     </div>

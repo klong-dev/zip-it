@@ -2,7 +2,8 @@ import axios from "axios";
 
 // Create axios instance với base URL
 const api = axios.create({
-  baseURL: "https://zip.klong.io.vn/api",
+  // baseURL: "https://zip.klong.io.vn/api",
+  baseURL: "http://localhost:3011/api",
   headers: {
     "Content-Type": "application/json",
   },
@@ -11,31 +12,80 @@ const api = axios.create({
 // Request interceptor - thêm token vào headers
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    // Kiểm tra xem có phải request admin không
+    const isAdminRequest = config.url?.includes("/admin/");
+
+    // Lấy token phù hợp (admin_token cho admin routes, token cho user routes)
+    const token = typeof window !== "undefined" ? (isAdminRequest ? localStorage.getItem("admin_token") : localStorage.getItem("token")) : null;
+
+    console.log("🚀 API Request:", {
+      url: config.url,
+      fullUrl: `${config.baseURL}${config.url}`,
+      method: config.method?.toUpperCase(),
+      isAdminRequest,
+      hasToken: !!token,
+      tokenPreview: token ? `${token.substring(0, 20)}...` : null,
+    });
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
   (error) => {
+    console.error("❌ API Request Error:", error);
     return Promise.reject(error);
   }
 );
 
 // Response interceptor - xử lý errors
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log("✅ API Response success:", {
+      url: response.config.url,
+      status: response.status,
+      statusText: response.statusText,
+      hasData: !!response.data,
+      dataPreview: typeof response.data === "object" ? Object.keys(response.data) : response.data,
+    });
+    return response;
+  },
   (error) => {
+    console.error("❌ API Response error:", {
+      url: error.config?.url,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data,
+      message: error.message,
+      isNetworkError: !error.response && error.request,
+    });
+
     if (error.response) {
       const { status, data } = error.response;
 
       switch (status) {
         case 401:
           // Unauthorized - xóa token và redirect đến login
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          if (typeof window !== "undefined" && !window.location.pathname.includes("/login")) {
-            // window.location.href = '/login';
+          const isAdminRoute = error.config?.url?.includes("/admin/");
+
+          if (isAdminRoute) {
+            // Admin unauthorized - xóa admin token và redirect về admin login
+            if (typeof window !== "undefined") {
+              localStorage.removeItem("admin_token");
+              localStorage.removeItem("admin_user");
+              if (!window.location.pathname.includes("/admin/login")) {
+                window.location.href = "/admin/login";
+              }
+            }
+          } else {
+            // User unauthorized - xóa user token
+            if (typeof window !== "undefined") {
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+              if (!window.location.pathname.includes("/login")) {
+                // window.location.href = '/login';
+              }
+            }
           }
           break;
 
