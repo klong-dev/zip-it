@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Package, ShoppingCart, Users, DollarSign, LogOut, LayoutDashboard, TrendingUp, AlertTriangle } from "lucide-react";
+import { Package, ShoppingCart, Users, DollarSign, LogOut, LayoutDashboard, TrendingUp, AlertTriangle, Mail } from "lucide-react";
 import Link from "next/link";
 import { adminAPI, DashboardStats } from "@/lib/apiService";
 import { toast } from "sonner";
@@ -249,6 +249,20 @@ export default function AdminDashboardPage() {
                     <div>
                       <h4 className="font-bold text-[#111111]">Quản lý Đơn hàng</h4>
                       <p className="text-sm text-[#74787c]">Xem và xử lý đơn hàng</p>
+                    </div>
+                  </div>
+                </Card>
+              </Link>
+
+              <Link href="/admin/contacts">
+                <Card className="p-6 bg-white hover:shadow-lg transition-shadow cursor-pointer border-2 border-transparent hover:border-[#980b15]">
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 bg-[#980b15] bg-opacity-10 rounded-lg flex items-center justify-center">
+                      <Mail className="w-7 h-7 text-[#980b15]" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-[#111111]">Quản lý Liên hệ</h4>
+                      <p className="text-sm text-[#74787c]">Xem các yêu cầu liên hệ</p>
                     </div>
                   </div>
                 </Card>

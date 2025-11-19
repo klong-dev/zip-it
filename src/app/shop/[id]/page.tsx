@@ -139,7 +139,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           </div>
           <div className="flex flex-col">
             <h2 className="text-[#111111] text-3xl font-semibold mb-4">{product.name}</h2>
-            <div className="flex items-center gap-2 mb-4">
+            {/* <div className="flex items-center gap-2 mb-4">
               <div className="flex gap-1">
                 {[...Array(5)].map((_, i) => (
                   <svg key={i} width="16" height="16" viewBox="0 0 16 16" fill={i < product.rating ? "#980b15" : "#d9d9d9"}>
@@ -148,7 +148,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 ))}
               </div>
               <span className="text-[#74787c] text-sm">({product.reviews} đánh giá)</span>
-            </div>
+            </div> */}
             <div className="text-[#111111] text-2xl font-semibold mb-6">{product.priceRange || product.priceFormatted}</div>
             <div className="mb-4">{product.inStock ? <span className="text-green-600 font-medium text-sm"> Còn hàng ({product.stock} sản phẩm)</span> : <span className="text-red-600 font-medium text-sm"> Hết hàng</span>}</div>
             <p className="text-[#74787c] text-sm leading-relaxed mb-8">{product.description}</p>
@@ -201,9 +201,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               <TabsTrigger value="additional" className="px-6 py-3 text-[#111111] data-[state=active]:border-b-2 data-[state=active]:border-[#980b15] rounded-none bg-transparent">
                 THÔNG TIN BỔ SUNG
               </TabsTrigger>
-              <TabsTrigger value="reviews" className="px-6 py-3 text-[#111111] data-[state=active]:border-b-2 data-[state=active]:border-[#980b15] rounded-none bg-transparent">
+              {/* <TabsTrigger value="reviews" className="px-6 py-3 text-[#111111] data-[state=active]:border-b-2 data-[state=active]:border-[#980b15] rounded-none bg-transparent">
                 ĐÁNH GIÁ ({product.reviews})
-              </TabsTrigger>
+              </TabsTrigger> */}
             </TabsList>
             <TabsContent value="description" className="mt-8 text-[#74787c] space-y-4">
               <h3 className="text-[#111111] text-xl font-semibold">{product.name}</h3>
@@ -225,14 +225,14 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 </div>
               </div>
             </TabsContent>
-            <TabsContent value="reviews" className="mt-8 text-[#74787c]">
+            {/* <TabsContent value="reviews" className="mt-8 text-[#74787c]">
               <div className="space-y-6">
                 <div className="text-center py-8">
                   <p className="mb-4">Hãy là người đầu tiên đánh giá "{product.name}"</p>
                   <Button className="bg-[#980b15] hover:bg-[#7a0911]">Viết đánh giá</Button>
                 </div>
               </div>
-            </TabsContent>
+            </TabsContent> */}
           </Tabs>
         </div>
       </div>

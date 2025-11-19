@@ -8,13 +8,42 @@ import { useCart } from "@/contexts/CartContext";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import Select from "react-select";
+import provincesData from "@/lib/vietnam-provinces.json";
+
+interface OptionType {
+  value: string;
+  label: string;
+}
+
+interface Province {
+  name: string;
+  code: number;
+  division_type: string;
+  codename: string;
+  phone_code: number;
+  districts: District[];
+}
+
+interface District {
+  name: string;
+  code: number;
+  division_type: string;
+  codename: string;
+  province_code: number;
+}
 
 export default function CheckoutPage() {
   const { items, getTotalPrice } = useCart();
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
+
+  const [provinces, setProvinces] = useState<OptionType[]>([]);
+  const [districts, setDistricts] = useState<OptionType[]>([]);
+  const [selectedProvince, setSelectedProvince] = useState<OptionType | null>(null);
+  const [selectedDistrict, setSelectedDistrict] = useState<OptionType | null>(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -26,6 +55,14 @@ export default function CheckoutPage() {
     note: "",
     voucher: "",
   });
+
+  useEffect(() => {
+    const provinceOptions = provincesData.map((p) => ({
+      value: p.codename, // JSON dùng Id
+      label: p.name, // JSON dùng Name
+    }));
+    setProvinces(provinceOptions);
+  }, []);
 
   const totalPrice = getTotalPrice();
   const shippingFee = 30000;
@@ -40,6 +77,39 @@ export default function CheckoutPage() {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleProvinceChange = (option: OptionType | null) => {
+    setSelectedProvince(option);
+    setSelectedDistrict(null);
+
+    setFormData({
+      ...formData,
+      province: option ? option.label : "",
+      district: "",
+    });
+
+    if (option) {
+      const selectedProvinceData = provincesData.find((p) => p.codename === option.value);
+
+      const districtOptions =
+        selectedProvinceData?.wards.map((d) => ({
+          value: d.codename,
+          label: d.name,
+        })) || [];
+
+      setDistricts(districtOptions);
+    } else {
+      setDistricts([]);
+    }
+  };
+
+  const handleDistrictChange = (option: OptionType | null) => {
+    setSelectedDistrict(option);
+    setFormData({
+      ...formData,
+      district: option ? option.label : "",
     });
   };
 
@@ -173,11 +243,11 @@ export default function CheckoutPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">Tỉnh/Thành phố:</label>
-                  <Input name="province" value={formData.province} onChange={handleInputChange} className="bg-[#f2f2f2] border-none" placeholder="Tỉnh/Thành phố" />
+                  <Select instanceId="province-select" options={provinces} value={selectedProvince} onChange={handleProvinceChange} isSearchable placeholder="Chọn Tỉnh/Thành phố" className="react-select-container" classNamePrefix="react-select" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">Quận/Huyện:</label>
-                  <Input name="district" value={formData.district} onChange={handleInputChange} className="bg-[#f2f2f2] border-none" placeholder="Quận/Huyện" />
+                  <Select instanceId="district-select" options={districts} value={selectedDistrict} onChange={handleDistrictChange} isSearchable placeholder="Chọn Quận/Huyện" isDisabled={!selectedProvince} className="react-select-container" classNamePrefix="react-select" />
                 </div>
               </div>
               <div>

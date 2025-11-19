@@ -662,3 +662,31 @@ export const adminAPI = {
     },
   },
 };
+
+// ==================== CONTACT APIs ====================
+export interface ContactData {
+  name: string;
+  email: string;
+  phone: string;
+  message?: string;
+}
+
+export interface ContactResponse {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+  submittedAt: string;
+}
+
+export const contactAPI = {
+  create: async (data: ContactData): Promise<ContactResponse> => {
+    const response = await api.post("/admin/contacts", data);
+    return response.data;
+  },
+  getAll: async (): Promise<ContactResponse[]> => {
+    const response = await api.get("/admin/contacts");
+    return response.data;
+  },
+};

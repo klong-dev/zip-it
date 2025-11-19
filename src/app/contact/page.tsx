@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Facebook, Instagram, Phone, Mail, MapPin } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { contactAPI } from "@/lib/apiService";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -37,15 +38,8 @@ export default function ContactPage() {
     setIsSubmitting(true);
 
     try {
-      // TODO: Gửi data lên backend
-      // await contactAPI.submit(formData);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
+      await contactAPI.create(formData);
       toast.success("Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm nhất có thể.");
-
-      // Reset form
       setFormData({
         name: "",
         email: "",
@@ -210,7 +204,7 @@ export default function ContactPage() {
 
               {/* Additional Info */}
               <div className="mt-8 bg-[#980b15] text-white p-6 rounded-lg">
-                <h3 className="font-bold text-lg mb-3">💚 CAM KẾT CỦA CHÚNG TÔI</h3>
+                <h3 className="font-bold text-lg mb-3">CAM KẾT CỦA CHÚNG TÔI</h3>
                 <ul className="space-y-2 text-sm">
                   <li>• Phản hồi trong vòng 24 giờ</li>
                   <li>• Tư vấn miễn phí về sản phẩm và dịch vụ</li>
