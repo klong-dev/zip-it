@@ -158,7 +158,7 @@ export default function OrderCheckPage() {
         </div>
         <div className="relative z-10 text-center">
           <Package className="w-16 h-16 text-white mx-auto mb-4" />
-          <h1 className="text-5xl font-bold text-white mb-4">KIỂM TRA ĐỚN HÀNG</h1>
+          <h1 className="text-5xl font-bold text-white mb-4">KIỂM TRA ĐƠN HÀNG</h1>
           <p className="text-white text-lg">Nhập số điện thoại để tra cứu đơn hàng của bạn</p>
         </div>
       </div>
