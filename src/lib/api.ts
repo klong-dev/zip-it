@@ -3,8 +3,8 @@ import { supabase } from "@/lib/supabase";
 
 // Create axios instance với base URL
 const api = axios.create({
-  // baseURL: "https://zip.klong.io.vn/api",
-  baseURL: "http://localhost:3011/api",
+  baseURL: "https://zip.klong.io.vn/api",
+  // baseURL: "http://localhost:3011/api",
   headers: {
     "Content-Type": "application/json",
   },

@@ -51,7 +51,7 @@ const statusConfig: Record<string, { label: string; color: string; icon: React.C
 
 export default function MyOrdersPage() {
   const router = useRouter();
-  const { user, loading: userLoading, fetchUser } = useUserStore();
+  const { user, loading: userLoading } = useUserStore();
 
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);

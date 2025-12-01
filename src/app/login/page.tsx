@@ -10,7 +10,7 @@ import { toast } from "sonner";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { user, fetchUser, getRedirectAfterLogin, clearRedirectAfterLogin } = useUserStore();
+  const { user, setUser, getRedirectAfterLogin, clearRedirectAfterLogin } = useUserStore();
 
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
@@ -53,7 +53,8 @@ export default function LoginPage() {
         if (error) {
           toast.error(error.message || "Đăng nhập thất bại");
         } else {
-          await fetchUser();
+          const { data } = await supabase.auth.getUser();
+          if (data.user) setUser(data.user);
           toast.success("Đăng nhập thành công!");
           const redirectUrl = getRedirectAfterLogin() || "/";
           clearRedirectAfterLogin();

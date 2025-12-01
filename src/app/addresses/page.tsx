@@ -55,7 +55,7 @@ interface SelectOption {
 
 export default function AddressesPage() {
   const router = useRouter();
-  const { user, loading: userLoading, fetchUser } = useUserStore();
+  const { user, loading: userLoading } = useUserStore();
 
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [loading, setLoading] = useState(true);

@@ -8,7 +8,7 @@ import { useUserStore } from "@/stores/user-store";
 
 export default function CallbackPage() {
   const router = useRouter();
-  const { fetchUser, getRedirectAfterLogin, clearRedirectAfterLogin } = useUserStore();
+  const { setUser, getRedirectAfterLogin, clearRedirectAfterLogin } = useUserStore();
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
   const [message, setMessage] = useState("Đang xử lý đăng nhập...");
 
@@ -27,7 +27,7 @@ export default function CallbackPage() {
 
         if (data.session) {
           // Successfully authenticated
-          await fetchUser();
+          setUser(data.session.user);
           setStatus("success");
           setMessage("Đăng nhập thành công! Đang chuyển hướng...");
 
@@ -73,7 +73,7 @@ export default function CallbackPage() {
     };
 
     handleCallback();
-  }, [router, fetchUser, getRedirectAfterLogin, clearRedirectAfterLogin]);
+  }, [router, setUser, getRedirectAfterLogin, clearRedirectAfterLogin]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#f6f6f6] to-white flex items-center justify-center">
