@@ -30,7 +30,7 @@ export default function CallbackPage() {
           await fetchUser();
           setStatus("success");
           setMessage("Đăng nhập thành công! Đang chuyển hướng...");
-          
+
           // Get redirect URL if saved
           const redirectUrl = getRedirectAfterLogin() || "/";
           clearRedirectAfterLogin();
@@ -43,7 +43,7 @@ export default function CallbackPage() {
           // Check if this is an email confirmation callback
           const url = new URL(window.location.href);
           const type = url.searchParams.get("type");
-          
+
           if (type === "signup") {
             setStatus("success");
             setMessage("Email đã được xác nhận! Đang chuyển đến trang đăng nhập...");
@@ -79,7 +79,7 @@ export default function CallbackPage() {
     <div className="min-h-screen bg-gradient-to-br from-[#f6f6f6] to-white flex items-center justify-center">
       <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full mx-4 text-center">
         <img src="/logo.png" alt="ZIP" className="h-12 mx-auto mb-6" />
-        
+
         {status === "loading" && (
           <>
             <Loader2 className="w-12 h-12 animate-spin text-[#980b15] mx-auto mb-4" />
@@ -106,10 +106,7 @@ export default function CallbackPage() {
               </svg>
             </div>
             <p className="text-red-600 font-medium mb-4">{message}</p>
-            <button
-              onClick={() => router.push("/login")}
-              className="px-6 py-2 bg-[#980b15] text-white rounded-lg hover:bg-[#7a0912] transition-colors"
-            >
+            <button onClick={() => router.push("/login")} className="px-6 py-2 bg-[#980b15] text-white rounded-lg hover:bg-[#7a0912] transition-colors">
               Quay lại đăng nhập
             </button>
           </>

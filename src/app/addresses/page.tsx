@@ -3,21 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import {
-  MapPin,
-  Plus,
-  Pencil,
-  Trash2,
-  Star,
-  Loader2,
-  ArrowLeft,
-  Home,
-  Building,
-  Phone,
-  User,
-  X,
-  Check,
-} from "lucide-react";
+import { MapPin, Plus, Pencil, Trash2, Star, Loader2, ArrowLeft, Home, Building, Phone, User, X, Check } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useUserStore } from "@/stores/user-store";
 import { userAPI } from "@/lib/apiService";
@@ -97,21 +83,25 @@ export default function AddressesPage() {
   // Note: The JSON file has provinces with wards (acting as districts)
   const [vnProvinces, setVnProvinces] = useState<VNProvince[]>([]);
   const [currentDistricts, setCurrentDistricts] = useState<SelectOption[]>([]);
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
+    // Chỉ check auth một lần
+    if (authChecked) return;
+
     const checkAuth = async () => {
-      const { data } = await supabase.auth.getUser();
-      if (!data.user) {
+      const { data } = await supabase.auth.getSession();
+      if (!data.session) {
         sessionStorage.setItem("redirectAfterLogin", "/addresses");
         router.push("/login");
         return;
       }
-      await fetchUser();
+      setAuthChecked(true);
       loadAddresses();
       loadProvinces();
     };
     checkAuth();
-  }, [router, fetchUser]);
+  }, [router, authChecked]);
 
   const loadProvinces = async () => {
     try {
@@ -151,11 +141,12 @@ export default function AddressesPage() {
         ward_code: "",
       }));
       // Use wards as districts (JSON structure)
-      const districtOptions: SelectOption[] = province?.wards?.map(w => ({
-        value: w.codename,
-        label: w.name,
-        code: String(w.code),
-      })) || [];
+      const districtOptions: SelectOption[] =
+        province?.wards?.map((w) => ({
+          value: w.codename,
+          label: w.name,
+          code: String(w.code),
+        })) || [];
       setCurrentDistricts(districtOptions);
     }
   };
@@ -214,11 +205,12 @@ export default function AddressesPage() {
     // Load districts for the selected province
     const province = vnProvinces.find((p) => p.codename === address.province_code);
     if (province) {
-      const districtOptions: SelectOption[] = province.wards?.map(w => ({
-        value: w.codename,
-        label: w.name,
-        code: String(w.code),
-      })) || [];
+      const districtOptions: SelectOption[] =
+        province.wards?.map((w) => ({
+          value: w.codename,
+          label: w.name,
+          code: String(w.code),
+        })) || [];
       setCurrentDistricts(districtOptions);
     }
 
@@ -328,10 +320,7 @@ export default function AddressesPage() {
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div>
-              <Link
-                href="/"
-                className="inline-flex items-center gap-2 text-[#980b15] hover:text-[#7a0912] mb-2 text-sm"
-              >
+              <Link href="/" className="inline-flex items-center gap-2 text-[#980b15] hover:text-[#7a0912] mb-2 text-sm">
                 <ArrowLeft className="w-4 h-4" />
                 Quay lại trang chủ
               </Link>
@@ -340,10 +329,7 @@ export default function AddressesPage() {
                 Sổ địa chỉ
               </h1>
             </div>
-            <button
-              onClick={openAddForm}
-              className="flex items-center gap-2 px-4 py-2 bg-[#980b15] text-white rounded-lg hover:bg-[#7a0912] transition-colors"
-            >
+            <button onClick={openAddForm} className="flex items-center gap-2 px-4 py-2 bg-[#980b15] text-white rounded-lg hover:bg-[#7a0912] transition-colors">
               <Plus className="w-4 h-4" />
               Thêm địa chỉ
             </button>
@@ -359,10 +345,7 @@ export default function AddressesPage() {
               <MapPin className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-800 mb-2">Chưa có địa chỉ nào</h3>
               <p className="text-gray-500 mb-6">Thêm địa chỉ giao hàng để mua sắm nhanh hơn</p>
-              <button
-                onClick={openAddForm}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-[#980b15] text-white rounded-lg hover:bg-[#7a0912] transition-colors"
-              >
+              <button onClick={openAddForm} className="inline-flex items-center gap-2 px-6 py-3 bg-[#980b15] text-white rounded-lg hover:bg-[#7a0912] transition-colors">
                 <Plus className="w-4 h-4" />
                 Thêm địa chỉ mới
               </button>
@@ -370,23 +353,10 @@ export default function AddressesPage() {
           ) : (
             <div className="grid gap-4 md:grid-cols-2">
               {addresses.map((address) => (
-                <div
-                  key={address.id}
-                  className={`bg-white rounded-xl shadow-sm p-6 border-2 transition-colors ${
-                    address.is_default ? "border-[#980b15]" : "border-transparent"
-                  }`}
-                >
+                <div key={address.id} className={`bg-white rounded-xl shadow-sm p-6 border-2 transition-colors ${address.is_default ? "border-[#980b15]" : "border-transparent"}`}>
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-2">
-                      <span
-                        className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full ${
-                          address.type === "home"
-                            ? "bg-blue-100 text-blue-700"
-                            : address.type === "office"
-                            ? "bg-purple-100 text-purple-700"
-                            : "bg-gray-100 text-gray-700"
-                        }`}
-                      >
+                      <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full ${address.type === "home" ? "bg-blue-100 text-blue-700" : address.type === "office" ? "bg-purple-100 text-purple-700" : "bg-gray-100 text-gray-700"}`}>
                         {getTypeIcon(address.type)}
                         {getTypeLabel(address.type)}
                       </span>
@@ -398,24 +368,11 @@ export default function AddressesPage() {
                       )}
                     </div>
                     <div className="flex items-center gap-1">
-                      <button
-                        onClick={() => openEditForm(address)}
-                        className="p-2 text-gray-400 hover:text-[#980b15] hover:bg-gray-100 rounded-lg transition-colors"
-                        title="Chỉnh sửa"
-                      >
+                      <button onClick={() => openEditForm(address)} className="p-2 text-gray-400 hover:text-[#980b15] hover:bg-gray-100 rounded-lg transition-colors" title="Chỉnh sửa">
                         <Pencil className="w-4 h-4" />
                       </button>
-                      <button
-                        onClick={() => handleDelete(address.id)}
-                        disabled={deletingId === address.id}
-                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
-                        title="Xóa"
-                      >
-                        {deletingId === address.id ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <Trash2 className="w-4 h-4" />
-                        )}
+                      <button onClick={() => handleDelete(address.id)} disabled={deletingId === address.id} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50" title="Xóa">
+                        {deletingId === address.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                       </button>
                     </div>
                   </div>
@@ -442,10 +399,7 @@ export default function AddressesPage() {
                   </div>
 
                   {!address.is_default && (
-                    <button
-                      onClick={() => handleSetDefault(address.id)}
-                      className="mt-4 text-sm text-[#980b15] hover:text-[#7a0912] font-medium"
-                    >
+                    <button onClick={() => handleSetDefault(address.id)} className="mt-4 text-sm text-[#980b15] hover:text-[#7a0912] font-medium">
                       Đặt làm địa chỉ mặc định
                     </button>
                   )}
@@ -460,9 +414,7 @@ export default function AddressesPage() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
               <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
-                <h2 className="text-xl font-bold text-gray-800">
-                  {editingAddress ? "Chỉnh sửa địa chỉ" : "Thêm địa chỉ mới"}
-                </h2>
+                <h2 className="text-xl font-bold text-gray-800">{editingAddress ? "Chỉnh sửa địa chỉ" : "Thêm địa chỉ mới"}</h2>
                 <button
                   onClick={() => {
                     setShowForm(false);
@@ -477,9 +429,7 @@ export default function AddressesPage() {
               <form onSubmit={handleSubmit} className="p-6 space-y-4">
                 {/* Address Type */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Loại địa chỉ
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Loại địa chỉ</label>
                   <div className="flex gap-3">
                     {[
                       { value: "home", label: "Nhà riêng", icon: Home },
@@ -490,11 +440,7 @@ export default function AddressesPage() {
                         key={value}
                         type="button"
                         onClick={() => setFormData((prev) => ({ ...prev, type: value as "home" | "office" | "other" }))}
-                        className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 border rounded-lg transition-colors ${
-                          formData.type === value
-                            ? "border-[#980b15] bg-[#980b15]/5 text-[#980b15]"
-                            : "border-gray-200 hover:border-gray-300"
-                        }`}
+                        className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 border rounded-lg transition-colors ${formData.type === value ? "border-[#980b15] bg-[#980b15]/5 text-[#980b15]" : "border-gray-200 hover:border-gray-300"}`}
                       >
                         <Icon className="w-4 h-4" />
                         {label}
@@ -508,14 +454,7 @@ export default function AddressesPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Họ và tên <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
-                    value={formData.full_name}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, full_name: e.target.value }))}
-                    required
-                    placeholder="Nguyễn Văn A"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#980b15] focus:border-transparent outline-none"
-                  />
+                  <input type="text" value={formData.full_name} onChange={(e) => setFormData((prev) => ({ ...prev, full_name: e.target.value }))} required placeholder="Nguyễn Văn A" className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#980b15] focus:border-transparent outline-none" />
                 </div>
 
                 {/* Phone */}
@@ -523,14 +462,7 @@ export default function AddressesPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Số điện thoại <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))}
-                    required
-                    placeholder="0912345678"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#980b15] focus:border-transparent outline-none"
-                  />
+                  <input type="tel" value={formData.phone} onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))} required placeholder="0912345678" className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#980b15] focus:border-transparent outline-none" />
                 </div>
 
                 {/* Province */}
@@ -538,15 +470,7 @@ export default function AddressesPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Tỉnh/Thành phố <span className="text-red-500">*</span>
                   </label>
-                  <Select
-                    options={provinceOptions}
-                    value={provinceOptions.find((p) => p.value === formData.province_code) || null}
-                    onChange={(selected) => handleProvinceChange(selected as SelectOption | null)}
-                    placeholder="Chọn tỉnh/thành phố"
-                    isClearable
-                    className="react-select-container"
-                    classNamePrefix="react-select"
-                  />
+                  <Select options={provinceOptions} value={provinceOptions.find((p) => p.value === formData.province_code) || null} onChange={(selected) => handleProvinceChange(selected as SelectOption | null)} placeholder="Chọn tỉnh/thành phố" isClearable className="react-select-container" classNamePrefix="react-select" />
                 </div>
 
                 {/* District */}
@@ -554,16 +478,7 @@ export default function AddressesPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Quận/Huyện <span className="text-red-500">*</span>
                   </label>
-                  <Select
-                    options={currentDistricts}
-                    value={currentDistricts.find((d) => d.value === formData.district_code) || null}
-                    onChange={(selected) => handleDistrictChange(selected as SelectOption | null)}
-                    placeholder="Chọn quận/huyện"
-                    isClearable
-                    isDisabled={!formData.province_code}
-                    className="react-select-container"
-                    classNamePrefix="react-select"
-                  />
+                  <Select options={currentDistricts} value={currentDistricts.find((d) => d.value === formData.district_code) || null} onChange={(selected) => handleDistrictChange(selected as SelectOption | null)} placeholder="Chọn quận/huyện" isClearable isDisabled={!formData.province_code} className="react-select-container" classNamePrefix="react-select" />
                 </div>
 
                 {/* Address Detail */}
@@ -571,27 +486,12 @@ export default function AddressesPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Địa chỉ chi tiết <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
-                    value={formData.address}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, address: e.target.value }))}
-                    required
-                    placeholder="Số nhà, tên đường, tòa nhà..."
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#980b15] focus:border-transparent outline-none"
-                  />
+                  <input type="text" value={formData.address} onChange={(e) => setFormData((prev) => ({ ...prev, address: e.target.value }))} required placeholder="Số nhà, tên đường, tòa nhà..." className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#980b15] focus:border-transparent outline-none" />
                 </div>
 
                 {/* Set as Default */}
                 <div className="flex items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setFormData((prev) => ({ ...prev, is_default: !prev.is_default }))}
-                    className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
-                      formData.is_default
-                        ? "bg-[#980b15] border-[#980b15]"
-                        : "border-gray-300 hover:border-gray-400"
-                    }`}
-                  >
+                  <button type="button" onClick={() => setFormData((prev) => ({ ...prev, is_default: !prev.is_default }))} className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${formData.is_default ? "bg-[#980b15] border-[#980b15]" : "border-gray-300 hover:border-gray-400"}`}>
                     {formData.is_default && <Check className="w-3 h-3 text-white" />}
                   </button>
                   <label className="text-sm text-gray-700">Đặt làm địa chỉ mặc định</label>
@@ -609,11 +509,7 @@ export default function AddressesPage() {
                   >
                     Hủy
                   </button>
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="flex-1 px-4 py-3 bg-[#980b15] text-white rounded-lg hover:bg-[#7a0912] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-                  >
+                  <button type="submit" disabled={submitting} className="flex-1 px-4 py-3 bg-[#980b15] text-white rounded-lg hover:bg-[#7a0912] transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
                     {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                     {editingAddress ? "Cập nhật" : "Thêm địa chỉ"}
                   </button>

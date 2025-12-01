@@ -3,19 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { 
-  Package, 
-  Loader2, 
-  ChevronRight, 
-  Clock, 
-  CheckCircle, 
-  XCircle, 
-  Truck,
-  CreditCard,
-  AlertCircle,
-  RefreshCw,
-  ArrowLeft
-} from "lucide-react";
+import { Package, Loader2, ChevronRight, Clock, CheckCircle, XCircle, Truck, CreditCard, AlertCircle, RefreshCw, ArrowLeft } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useUserStore } from "@/stores/user-store";
 import { ordersAPI } from "@/lib/apiService";
@@ -51,39 +39,43 @@ interface Order {
 }
 
 const statusConfig: Record<string, { label: string; color: string; icon: React.ComponentType<{ className?: string }> }> = {
-  "pending": { label: "Chờ xác nhận", color: "bg-yellow-100 text-yellow-700", icon: Clock },
-  "awaiting_payment": { label: "Chờ thanh toán", color: "bg-orange-100 text-orange-700", icon: CreditCard },
-  "paid": { label: "Đã thanh toán", color: "bg-blue-100 text-blue-700", icon: CheckCircle },
-  "processing": { label: "Đang xử lý", color: "bg-purple-100 text-purple-700", icon: RefreshCw },
-  "shipping": { label: "Đang giao hàng", color: "bg-cyan-100 text-cyan-700", icon: Truck },
-  "delivered": { label: "Đã giao hàng", color: "bg-green-100 text-green-700", icon: CheckCircle },
-  "cancelled": { label: "Đã hủy", color: "bg-red-100 text-red-700", icon: XCircle },
-  "refunded": { label: "Đã hoàn tiền", color: "bg-gray-100 text-gray-700", icon: RefreshCw },
+  pending: { label: "Chờ xác nhận", color: "bg-yellow-100 text-yellow-700", icon: Clock },
+  awaiting_payment: { label: "Chờ thanh toán", color: "bg-orange-100 text-orange-700", icon: CreditCard },
+  paid: { label: "Đã thanh toán", color: "bg-blue-100 text-blue-700", icon: CheckCircle },
+  processing: { label: "Đang xử lý", color: "bg-purple-100 text-purple-700", icon: RefreshCw },
+  shipping: { label: "Đang giao hàng", color: "bg-cyan-100 text-cyan-700", icon: Truck },
+  delivered: { label: "Đã giao hàng", color: "bg-green-100 text-green-700", icon: CheckCircle },
+  cancelled: { label: "Đã hủy", color: "bg-red-100 text-red-700", icon: XCircle },
+  refunded: { label: "Đã hoàn tiền", color: "bg-gray-100 text-gray-700", icon: RefreshCw },
 };
 
 export default function MyOrdersPage() {
   const router = useRouter();
   const { user, loading: userLoading, fetchUser } = useUserStore();
-  
+
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [cancellingOrder, setCancellingOrder] = useState<number | null>(null);
   const [expandedOrder, setExpandedOrder] = useState<number | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
+    // Chỉ check auth một lần
+    if (authChecked) return;
+
     const checkAuth = async () => {
-      const { data } = await supabase.auth.getUser();
-      if (!data.user) {
+      const { data } = await supabase.auth.getSession();
+      if (!data.session) {
         // Save redirect URL and redirect to login
         sessionStorage.setItem("redirectAfterLogin", "/orders/my-orders");
         router.push("/login");
         return;
       }
-      await fetchUser();
+      setAuthChecked(true);
       loadOrders();
     };
     checkAuth();
-  }, [router, fetchUser]);
+  }, [router, authChecked]);
 
   const loadOrders = async () => {
     setLoading(true);
@@ -156,10 +148,7 @@ export default function MyOrdersPage() {
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div>
-              <Link 
-                href="/" 
-                className="inline-flex items-center gap-2 text-[#980b15] hover:text-[#7a0912] mb-2 text-sm"
-              >
+              <Link href="/" className="inline-flex items-center gap-2 text-[#980b15] hover:text-[#7a0912] mb-2 text-sm">
                 <ArrowLeft className="w-4 h-4" />
                 Quay lại trang chủ
               </Link>
@@ -168,11 +157,7 @@ export default function MyOrdersPage() {
                 Đơn hàng của tôi
               </h1>
             </div>
-            <button
-              onClick={loadOrders}
-              disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 text-sm bg-white rounded-lg border hover:bg-gray-50 transition-colors disabled:opacity-50"
-            >
+            <button onClick={loadOrders} disabled={loading} className="flex items-center gap-2 px-4 py-2 text-sm bg-white rounded-lg border hover:bg-gray-50 transition-colors disabled:opacity-50">
               <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
               Làm mới
             </button>
@@ -188,10 +173,7 @@ export default function MyOrdersPage() {
               <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-800 mb-2">Chưa có đơn hàng nào</h3>
               <p className="text-gray-500 mb-6">Bạn chưa có đơn hàng nào. Hãy khám phá sản phẩm của chúng tôi!</p>
-              <Link
-                href="/shop"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-[#980b15] text-white rounded-lg hover:bg-[#7a0912] transition-colors"
-              >
+              <Link href="/shop" className="inline-flex items-center gap-2 px-6 py-3 bg-[#980b15] text-white rounded-lg hover:bg-[#7a0912] transition-colors">
                 Mua sắm ngay
                 <ChevronRight className="w-4 h-4" />
               </Link>
@@ -206,10 +188,7 @@ export default function MyOrdersPage() {
                 return (
                   <div key={order.id} className="bg-white rounded-xl shadow-sm overflow-hidden">
                     {/* Order Header */}
-                    <div 
-                      className="p-4 sm:p-6 cursor-pointer hover:bg-gray-50 transition-colors"
-                      onClick={() => setExpandedOrder(isExpanded ? null : order.id)}
-                    >
+                    <div className="p-4 sm:p-6 cursor-pointer hover:bg-gray-50 transition-colors" onClick={() => setExpandedOrder(isExpanded ? null : order.id)}>
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
@@ -219,11 +198,9 @@ export default function MyOrdersPage() {
                               {status.label}
                             </span>
                           </div>
-                          <p className="text-sm text-gray-500">
-                            Đặt ngày: {formatDate(order.created_at)}
-                          </p>
+                          <p className="text-sm text-gray-500">Đặt ngày: {formatDate(order.created_at)}</p>
                         </div>
-                        
+
                         <div className="flex items-center gap-4">
                           <div className="text-right">
                             <p className="text-sm text-gray-500">Tổng tiền</p>
@@ -242,13 +219,7 @@ export default function MyOrdersPage() {
                           <h4 className="font-medium text-gray-800">Sản phẩm</h4>
                           {order.items.map((item, index) => (
                             <div key={index} className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
-                              {item.image_url && (
-                                <img 
-                                  src={item.image_url} 
-                                  alt={item.product_name}
-                                  className="w-16 h-16 object-cover rounded-lg"
-                                />
-                              )}
+                              {item.image_url && <img src={item.image_url} alt={item.product_name} className="w-16 h-16 object-cover rounded-lg" />}
                               <div className="flex-1">
                                 <p className="font-medium text-gray-800">{item.product_name}</p>
                                 <p className="text-sm text-gray-500">Số lượng: {item.quantity}</p>
@@ -279,9 +250,7 @@ export default function MyOrdersPage() {
                           <div className="px-4 sm:px-6 pb-4 sm:pb-6">
                             <div className="flex items-center gap-2 p-3 bg-yellow-50 rounded-lg mb-4">
                               <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0" />
-                              <p className="text-sm text-yellow-700">
-                                Bạn có thể hủy đơn hàng này vì đơn hàng chưa được xử lý.
-                              </p>
+                              <p className="text-sm text-yellow-700">Bạn có thể hủy đơn hàng này vì đơn hàng chưa được xử lý.</p>
                             </div>
                             <button
                               onClick={(e) => {
@@ -291,11 +260,7 @@ export default function MyOrdersPage() {
                               disabled={cancellingOrder === order.id}
                               className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50"
                             >
-                              {cancellingOrder === order.id ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                              ) : (
-                                <XCircle className="w-4 h-4" />
-                              )}
+                              {cancellingOrder === order.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4" />}
                               Hủy đơn hàng
                             </button>
                           </div>

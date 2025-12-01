@@ -1,31 +1,67 @@
 import axios from "axios";
+import { supabase } from "@/lib/supabase";
 
 // Create axios instance với base URL
 const api = axios.create({
-  baseURL: "https://zip.klong.io.vn/api",
-  // baseURL: "http://localhost:3011/api",
+  // baseURL: "https://zip.klong.io.vn/api",
+  baseURL: "http://localhost:3011/api",
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// Request interceptor - thêm token vào headers
+// Cache token để tránh gọi getSession() liên tục
+let cachedToken: string | null = null;
+let tokenExpiresAt: number = 0;
+let isInitialized = false;
+
+// Hàm khởi tạo token (chỉ gọi 1 lần)
+const initializeToken = async () => {
+  if (isInitialized || typeof window === "undefined") return;
+  isInitialized = true;
+
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (session) {
+      cachedToken = session.access_token;
+      tokenExpiresAt = session.expires_at ? session.expires_at * 1000 : 0;
+    }
+  } catch (error) {
+    console.error("Error initializing token:", error);
+  }
+
+  // Lắng nghe auth state changes
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (session) {
+      cachedToken = session.access_token;
+      tokenExpiresAt = session.expires_at ? session.expires_at * 1000 : 0;
+    } else {
+      cachedToken = null;
+      tokenExpiresAt = 0;
+    }
+  });
+};
+
+// Khởi tạo ngay khi module load
+initializeToken();
+
+// Request interceptor - thêm token vào headers (SYNC, không gọi API)
 api.interceptors.request.use(
   (config) => {
     // Kiểm tra xem có phải request admin không
     const isAdminRequest = config.url?.includes("/admin/");
 
-    // Lấy token phù hợp (admin_token cho admin routes, token cho user routes)
-    const token = typeof window !== "undefined" ? (isAdminRequest ? localStorage.getItem("admin_token") : localStorage.getItem("token")) : null;
+    let token: string | null = null;
 
-    console.log("🚀 API Request:", {
-      url: config.url,
-      fullUrl: `${config.baseURL}${config.url}`,
-      method: config.method?.toUpperCase(),
-      isAdminRequest,
-      hasToken: !!token,
-      tokenPreview: token ? `${token.substring(0, 20)}...` : null,
-    });
+    if (isAdminRequest) {
+      // Admin routes: lấy từ localStorage
+      token = typeof window !== "undefined" ? localStorage.getItem("admin_token") : null;
+    } else {
+      // User routes: sử dụng cached token (không gọi API)
+      token = cachedToken;
+    }
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

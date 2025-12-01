@@ -16,26 +16,13 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
-  
-  const { user, fetchUser, setUser } = useUserStore();
+
+  const { user, setUser, initialize } = useUserStore();
 
   useEffect(() => {
-    // Check auth state on mount
-    fetchUser();
-
-    // Listen for auth state changes
-    const { data: { subscription } } = authHelpers.onAuthStateChange((event, session) => {
-      if (event === "SIGNED_IN" && session?.user) {
-        setUser(session.user);
-      } else if (event === "SIGNED_OUT") {
-        setUser(null);
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [fetchUser, setUser]);
+    // Khởi tạo auth state một lần duy nhất
+    initialize();
+  }, [initialize]);
 
   // Close user menu when clicking outside
   useEffect(() => {
@@ -96,11 +83,6 @@ export default function Header() {
               <Link href="/contact" className="hover:opacity-80 transition-opacity font-medium">
                 LIÊN HỆ
               </Link>
-              {!user && (
-                <Link href="/orders/check" className="hover:opacity-80 transition-opacity font-medium">
-                  KIỂM TRA ĐƠN HÀNG
-                </Link>
-              )}
             </nav>
 
             {/* Right Section */}
@@ -112,16 +94,11 @@ export default function Header() {
               {/* User Menu */}
               {user ? (
                 <div className="relative" ref={userMenuRef}>
-                  <button
-                    onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="hidden md:flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/10 transition-colors"
-                  >
+                  <button onClick={() => setUserMenuOpen(!userMenuOpen)} className="hidden md:flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
                     <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
                       <User className="w-4 h-4" />
                     </div>
-                    <span className="text-sm font-medium max-w-[120px] truncate">
-                      {getUserDisplayName()}
-                    </span>
+                    <span className="text-sm font-medium max-w-[120px] truncate">{getUserDisplayName()}</span>
                     <ChevronDown className={`w-4 h-4 transition-transform ${userMenuOpen ? "rotate-180" : ""}`} />
                   </button>
 
@@ -132,27 +109,16 @@ export default function Header() {
                         <p className="text-sm font-medium text-gray-800 truncate">{getUserDisplayName()}</p>
                         <p className="text-xs text-gray-500 truncate">{user.email}</p>
                       </div>
-                      <Link
-                        href="/orders/my-orders"
-                        onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors"
-                      >
+                      <Link href="/orders/my-orders" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors">
                         <Package className="w-4 h-4 text-gray-400" />
                         <span className="text-sm">Đơn hàng của tôi</span>
                       </Link>
-                      <Link
-                        href="/addresses"
-                        onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors"
-                      >
+                      <Link href="/addresses" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors">
                         <MapPin className="w-4 h-4 text-gray-400" />
                         <span className="text-sm">Sổ địa chỉ</span>
                       </Link>
                       <div className="border-t border-gray-100 mt-2 pt-2">
-                        <button
-                          onClick={handleLogout}
-                          className="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 w-full transition-colors"
-                        >
+                        <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 w-full transition-colors">
                           <LogOut className="w-4 h-4" />
                           <span className="text-sm">Đăng xuất</span>
                         </button>
@@ -161,10 +127,7 @@ export default function Header() {
                   )}
                 </div>
               ) : (
-                <Link
-                  href="/login"
-                  className="hidden md:flex items-center gap-2 px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
-                >
+                <Link href="/login" className="hidden md:flex items-center gap-2 px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors">
                   <User className="w-4 h-4" />
                   <span className="text-sm font-medium">Đăng nhập</span>
                 </Link>
@@ -245,19 +208,9 @@ export default function Header() {
                 </button>
               </>
             ) : (
-              <>
-                <Link href="/orders/check" className="py-3 px-2 rounded hover:bg-[#f6f6f6] font-medium" onClick={() => setMenuOpen(false)}>
-                  KIỂM TRA ĐƠN HÀNG
-                </Link>
-                <div className="border-t border-gray-200 my-2"></div>
-                <Link
-                  href="/login"
-                  className="py-3 px-4 bg-[#980b15] text-white rounded-lg font-medium text-center hover:bg-[#7a0912] transition-colors"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  Đăng nhập / Đăng ký
-                </Link>
-              </>
+              <Link href="/login" className="py-3 px-4 bg-[#980b15] text-white rounded-lg font-medium text-center hover:bg-[#7a0912] transition-colors" onClick={() => setMenuOpen(false)}>
+                Đăng nhập / Đăng ký
+              </Link>
             )}
           </nav>
         </div>
