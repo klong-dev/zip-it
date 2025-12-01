@@ -258,6 +258,18 @@ export const ordersAPI = {
     const response = await api.get(`/orders/${id}`);
     return response.data;
   },
+
+  // Get orders for logged-in user
+  getMyOrders: async (): Promise<{ data: { orders: any[] } }> => {
+    const response = await api.get("/orders/my-orders");
+    return response.data;
+  },
+
+  // Cancel order (only for pending/awaiting_payment/paid status)
+  cancelOrder: async (orderId: number): Promise<{ success: boolean; message: string }> => {
+    const response = await api.post(`/orders/${orderId}/cancel`);
+    return response.data;
+  },
 };
 
 // ==================== CART APIs (Optional - for multi-device sync) ====================
@@ -310,9 +322,64 @@ export interface UserProfile {
   name: string;
 }
 
+export interface UserAddress {
+  id: number;
+  full_name: string;
+  phone: string;
+  address: string;
+  province: string;
+  province_code: string;
+  district: string;
+  district_code: string;
+  ward?: string;
+  ward_code?: string;
+  is_default: boolean;
+  type: "home" | "office" | "other";
+}
+
+export interface AddressData {
+  full_name: string;
+  phone: string;
+  address: string;
+  province: string;
+  province_code: string;
+  district: string;
+  district_code: string;
+  ward?: string;
+  ward_code?: string;
+  is_default?: boolean;
+  type?: "home" | "office" | "other";
+}
+
 export const userAPI = {
   getProfile: async (): Promise<UserProfile> => {
     const response = await api.get("/users/profile");
+    return response.data;
+  },
+
+  // Address management
+  getAddresses: async (): Promise<{ data: { addresses: UserAddress[] } }> => {
+    const response = await api.get("/users/addresses");
+    return response.data;
+  },
+
+  addAddress: async (data: AddressData): Promise<{ data: UserAddress }> => {
+    const response = await api.post("/users/addresses", data);
+    return response.data;
+  },
+
+  updateAddress: async (id: number, data: AddressData): Promise<{ data: UserAddress }> => {
+    const response = await api.put(`/users/addresses/${id}`, data);
+    return response.data;
+  },
+
+  deleteAddress: async (id: number): Promise<{ success: boolean; message: string }> => {
+    const response = await api.delete(`/users/addresses/${id}`);
+    return response.data;
+  },
+
+  setDefaultAddress: async (id: number): Promise<{ success: boolean; message: string }> => {
+    const response = await api.put(`/users/addresses/${id}/default`);
     return response.data;
   },
 };

@@ -1,14 +1,70 @@
 "use client";
 
-import { ShoppingCart, Menu } from "lucide-react";
-import { useState } from "react";
+import { ShoppingCart, Menu, User, LogOut, Package, MapPin, ChevronDown } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCart } from "@/contexts/CartContext";
+import { supabase, authHelpers } from "@/lib/supabase";
+import { useUserStore } from "@/stores/user-store";
+import { toast } from "sonner";
 
 export default function Header() {
+  const router = useRouter();
   const { getTotalItems } = useCart();
   const totalItems = getTotalItems();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+  
+  const { user, fetchUser, setUser } = useUserStore();
+
+  useEffect(() => {
+    // Check auth state on mount
+    fetchUser();
+
+    // Listen for auth state changes
+    const { data: { subscription } } = authHelpers.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session?.user) {
+        setUser(session.user);
+      } else if (event === "SIGNED_OUT") {
+        setUser(null);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [fetchUser, setUser]);
+
+  // Close user menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await authHelpers.signOut();
+      setUser(null);
+      setUserMenuOpen(false);
+      toast.success("Đã đăng xuất");
+      router.push("/");
+    } catch (error) {
+      toast.error("Không thể đăng xuất");
+    }
+  };
+
+  const getUserDisplayName = () => {
+    if (!user) return "";
+    return user.user_metadata?.full_name || user.email?.split("@")[0] || "User";
+  };
 
   return (
     <>
@@ -40,9 +96,11 @@ export default function Header() {
               <Link href="/contact" className="hover:opacity-80 transition-opacity font-medium">
                 LIÊN HỆ
               </Link>
-              <Link href="/orders/check" className="hover:opacity-80 transition-opacity font-medium">
-                KIỂM TRA ĐƠN HÀNG
-              </Link>
+              {!user && (
+                <Link href="/orders/check" className="hover:opacity-80 transition-opacity font-medium">
+                  KIỂM TRA ĐƠN HÀNG
+                </Link>
+              )}
             </nav>
 
             {/* Right Section */}
@@ -50,6 +108,68 @@ export default function Header() {
               <div className="hidden lg:flex items-center gap-2 text-sm">
                 <span>Hotline: 0834946906</span>
               </div>
+
+              {/* User Menu */}
+              {user ? (
+                <div className="relative" ref={userMenuRef}>
+                  <button
+                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    className="hidden md:flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/10 transition-colors"
+                  >
+                    <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                      <User className="w-4 h-4" />
+                    </div>
+                    <span className="text-sm font-medium max-w-[120px] truncate">
+                      {getUserDisplayName()}
+                    </span>
+                    <ChevronDown className={`w-4 h-4 transition-transform ${userMenuOpen ? "rotate-180" : ""}`} />
+                  </button>
+
+                  {/* User Dropdown Menu */}
+                  {userMenuOpen && (
+                    <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-lg py-2 z-50">
+                      <div className="px-4 py-3 border-b border-gray-100">
+                        <p className="text-sm font-medium text-gray-800 truncate">{getUserDisplayName()}</p>
+                        <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                      </div>
+                      <Link
+                        href="/orders/my-orders"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors"
+                      >
+                        <Package className="w-4 h-4 text-gray-400" />
+                        <span className="text-sm">Đơn hàng của tôi</span>
+                      </Link>
+                      <Link
+                        href="/addresses"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors"
+                      >
+                        <MapPin className="w-4 h-4 text-gray-400" />
+                        <span className="text-sm">Sổ địa chỉ</span>
+                      </Link>
+                      <div className="border-t border-gray-100 mt-2 pt-2">
+                        <button
+                          onClick={handleLogout}
+                          className="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 w-full transition-colors"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          <span className="text-sm">Đăng xuất</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  className="hidden md:flex items-center gap-2 px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
+                >
+                  <User className="w-4 h-4" />
+                  <span className="text-sm font-medium">Đăng nhập</span>
+                </Link>
+              )}
+
               {/* Hamburger menu icon - only on mobile */}
               <button className="md:hidden flex items-center justify-center w-10 h-10 rounded hover:bg-[#7a0911]/20 transition-colors" aria-label="Mở menu" onClick={() => setMenuOpen((v) => !v)}>
                 <Menu className="w-7 h-7" />
@@ -72,6 +192,22 @@ export default function Header() {
               ×
             </button>
           </div>
+
+          {/* User info in mobile menu */}
+          {user && (
+            <div className="px-6 py-4 bg-gray-50 border-b">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-[#980b15]/10 rounded-full flex items-center justify-center">
+                  <User className="w-5 h-5 text-[#980b15]" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-gray-800 truncate">{getUserDisplayName()}</p>
+                  <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
           <nav className="flex flex-col gap-2 px-6 py-6">
             <Link href="/" className="py-3 px-2 rounded hover:bg-[#f6f6f6] font-medium" onClick={() => setMenuOpen(false)}>
               TRANG CHỦ
@@ -85,9 +221,44 @@ export default function Header() {
             <Link href="/contact" className="py-3 px-2 rounded hover:bg-[#f6f6f6] font-medium" onClick={() => setMenuOpen(false)}>
               LIÊN HỆ
             </Link>
-            <Link href="/orders/check" className="py-3 px-2 rounded hover:bg-[#f6f6f6] font-medium" onClick={() => setMenuOpen(false)}>
-              KIỂM TRA ĐƠN HÀNG
-            </Link>
+
+            {user ? (
+              <>
+                <div className="border-t border-gray-200 my-2"></div>
+                <Link href="/orders/my-orders" className="py-3 px-2 rounded hover:bg-[#f6f6f6] font-medium flex items-center gap-3" onClick={() => setMenuOpen(false)}>
+                  <Package className="w-4 h-4 text-gray-400" />
+                  Đơn hàng của tôi
+                </Link>
+                <Link href="/addresses" className="py-3 px-2 rounded hover:bg-[#f6f6f6] font-medium flex items-center gap-3" onClick={() => setMenuOpen(false)}>
+                  <MapPin className="w-4 h-4 text-gray-400" />
+                  Sổ địa chỉ
+                </Link>
+                <button
+                  onClick={() => {
+                    setMenuOpen(false);
+                    handleLogout();
+                  }}
+                  className="py-3 px-2 rounded hover:bg-red-50 font-medium flex items-center gap-3 text-red-600 text-left"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Đăng xuất
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/orders/check" className="py-3 px-2 rounded hover:bg-[#f6f6f6] font-medium" onClick={() => setMenuOpen(false)}>
+                  KIỂM TRA ĐƠN HÀNG
+                </Link>
+                <div className="border-t border-gray-200 my-2"></div>
+                <Link
+                  href="/login"
+                  className="py-3 px-4 bg-[#980b15] text-white rounded-lg font-medium text-center hover:bg-[#7a0912] transition-colors"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Đăng nhập / Đăng ký
+                </Link>
+              </>
+            )}
           </nav>
         </div>
       </header>
