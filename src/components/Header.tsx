@@ -63,14 +63,16 @@ export default function Header() {
       {/* Header Navigation */}
       <header className="bg-[#980b15] text-white relative z-30">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between py-4">
-            {/* Logo */}
-            <Link href="/" className="text-4xl font-bold tracking-wider hover:opacity-80 transition-opacity">
-              <img className="max-h-18 pt-2" src="/logo.png" alt="" />
-            </Link>
+          <div className="grid grid-cols-3 items-center py-4">
+            {/* Logo - Left */}
+            <div className="flex justify-start">
+              <Link href="/" className="text-4xl font-bold tracking-wider hover:opacity-80 transition-opacity">
+                <img className="max-h-18 pt-2" src="/logo.png" alt="" />
+              </Link>
+            </div>
 
-            {/* Navigation - Desktop */}
-            <nav className="hidden md:flex items-center gap-8">
+            {/* Navigation - Center */}
+            <nav className="hidden md:flex items-center justify-center gap-8">
               <Link href="/" className="hover:opacity-80 transition-opacity font-medium">
                 TRANG CHỦ
               </Link>
@@ -86,7 +88,7 @@ export default function Header() {
             </nav>
 
             {/* Right Section */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center justify-end gap-4">
               <div className="hidden lg:flex items-center gap-2 text-sm">
                 <span>Hotline: 0834946906</span>
               </div>
