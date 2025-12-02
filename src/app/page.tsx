@@ -78,7 +78,9 @@ export default function ZipLandingPage() {
   };
 
   const handleCategoryClick = (category: string) => {
-    router.push(`/shop?filter=${encodeURIComponent(category)}`);
+    // Sử dụng + thay vì %20 cho khoảng trắng
+    const encodedCategory = encodeURIComponent(category).replace(/%20/g, "+");
+    router.push(`/shop?filter=${encodedCategory}`);
   };
   return (
     <div className="min-h-screen">

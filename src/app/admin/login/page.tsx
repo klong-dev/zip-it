@@ -47,8 +47,10 @@ export default function AdminLoginPage() {
 
       toast.success(`Xin chào ${response.user.name}! Đăng nhập thành công.`);
 
-      // Redirect đến trang admin dashboard
-      router.push("/admin/dashboard");
+      // Redirect đến trang admin dashboard - dùng replace để không thể back lại
+      setTimeout(() => {
+        router.replace("/admin/dashboard");
+      }, 500);
     } catch (error: any) {
       console.error("❌ Login error:", error);
       console.error("Error details:", {
