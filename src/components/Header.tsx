@@ -80,7 +80,7 @@ export default function Header() {
                 SẢN PHẨM
               </Link>
               <Link href="/services" className="hover:opacity-80 transition-opacity font-medium">
-                DỊCH VỤ CỦA CHÚNG TÔI
+                DỊCH VỤ
               </Link>
               <Link href="/contact" className="hover:opacity-80 transition-opacity font-medium">
                 LIÊN HỆ
@@ -181,7 +181,7 @@ export default function Header() {
               SẢN PHẨM
             </Link>
             <Link href="/services" className="py-3 px-2 rounded hover:bg-[#f6f6f6] font-medium" onClick={() => setMenuOpen(false)}>
-              DỊCH VỤ CỦA CHÚNG TÔI
+              DỊCH VỤ
             </Link>
             <Link href="/contact" className="py-3 px-2 rounded hover:bg-[#f6f6f6] font-medium" onClick={() => setMenuOpen(false)}>
               LIÊN HỆ
