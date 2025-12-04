@@ -293,10 +293,7 @@ export default function CheckoutPage() {
                       )}
                       {/* Quantity controls */}
                       <div className="flex items-center gap-1 mt-2">
-                        <button
-                          onClick={() => handleQuantityChange(item.quantity - 1)}
-                          className="w-6 h-6 flex items-center justify-center bg-[#f2f2f2] rounded text-sm font-medium hover:bg-[#e0e0e0] transition-colors"
-                        >
+                        <button onClick={() => handleQuantityChange(item.quantity - 1)} className="w-6 h-6 flex items-center justify-center bg-[#f2f2f2] rounded text-sm font-medium hover:bg-[#e0e0e0] transition-colors">
                           -
                         </button>
                         <input
@@ -311,10 +308,7 @@ export default function CheckoutPage() {
                           }}
                           className="w-12 h-6 text-center text-sm border border-[#e0e0e0] rounded focus:outline-none focus:border-[#980b15]"
                         />
-                        <button
-                          onClick={() => handleQuantityChange(item.quantity + 1)}
-                          className="w-6 h-6 flex items-center justify-center bg-[#f2f2f2] rounded text-sm font-medium hover:bg-[#e0e0e0] transition-colors"
-                        >
+                        <button onClick={() => handleQuantityChange(item.quantity + 1)} className="w-6 h-6 flex items-center justify-center bg-[#f2f2f2] rounded text-sm font-medium hover:bg-[#e0e0e0] transition-colors">
                           +
                         </button>
                       </div>
