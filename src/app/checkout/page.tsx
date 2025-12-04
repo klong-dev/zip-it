@@ -79,20 +79,20 @@ export default function CheckoutPage() {
   useEffect(() => {
     const loadSavedAddresses = async () => {
       if (!user) return;
-      
+
       setLoadingAddresses(true);
       try {
         const response = await userAPI.getAddresses();
         if (response.data?.addresses) {
           setSavedAddresses(response.data.addresses);
-          
+
           // Auto-select default address
-          const defaultAddress = response.data.addresses.find(addr => addr.is_default);
+          const defaultAddress = response.data.addresses.find((addr) => addr.is_default);
           if (defaultAddress) {
             handleSelectSavedAddress({
               value: defaultAddress.id,
               label: `${defaultAddress.full_name} - ${defaultAddress.address}`,
-              address: defaultAddress
+              address: defaultAddress,
             });
           }
         }
@@ -126,10 +126,10 @@ export default function CheckoutPage() {
   // Handle selecting a saved address
   const handleSelectSavedAddress = (option: AddressOption | null) => {
     setSelectedSavedAddress(option);
-    
+
     if (option) {
       const addr = option.address;
-      
+
       // Update form data
       setFormData({
         ...formData,
@@ -141,20 +141,21 @@ export default function CheckoutPage() {
       });
 
       // Update province select
-      const provinceOption = provinces.find(p => p.label === addr.province);
+      const provinceOption = provinces.find((p) => p.label === addr.province);
       if (provinceOption) {
         setSelectedProvince(provinceOption);
-        
+
         // Load districts for this province
         const selectedProvinceData = provincesData.find((p) => p.codename === provinceOption.value);
-        const districtOptions = selectedProvinceData?.wards.map((d) => ({
-          value: d.codename,
-          label: d.name,
-        })) || [];
+        const districtOptions =
+          selectedProvinceData?.wards.map((d) => ({
+            value: d.codename,
+            label: d.name,
+          })) || [];
         setDistricts(districtOptions);
-        
+
         // Update district select
-        const districtOption = districtOptions.find(d => d.label === addr.district);
+        const districtOption = districtOptions.find((d) => d.label === addr.district);
         if (districtOption) {
           setSelectedDistrict(districtOption);
         }
@@ -163,10 +164,10 @@ export default function CheckoutPage() {
   };
 
   // Convert saved addresses to select options
-  const addressOptions: AddressOption[] = savedAddresses.map(addr => ({
+  const addressOptions: AddressOption[] = savedAddresses.map((addr) => ({
     value: addr.id,
-    label: `${addr.full_name} - ${addr.phone} - ${addr.address}, ${addr.district}, ${addr.province}${addr.is_default ? ' (Mặc định)' : ''}`,
-    address: addr
+    label: `${addr.full_name} - ${addr.phone} - ${addr.address}, ${addr.district}, ${addr.province}${addr.is_default ? " (Mặc định)" : ""}`,
+    address: addr,
   }));
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -323,7 +324,7 @@ export default function CheckoutPage() {
           {/* Left Column - Customer Info Form */}
           <div>
             <h2 className="text-xl font-bold mb-6 border-b-2 border-[#111111] pb-2">THÔNG TIN GIAO HÀNG</h2>
-            
+
             {/* Saved Addresses Section */}
             {user && savedAddresses.length > 0 && (
               <div className="mb-6 p-4 bg-[#f8f8f8] rounded-lg border border-[#e0e0e0]">
@@ -331,22 +332,8 @@ export default function CheckoutPage() {
                   <MapPin className="w-5 h-5 text-[#980b15]" />
                   <label className="text-sm font-semibold text-[#980b15]">Chọn từ sổ địa chỉ:</label>
                 </div>
-                <Select
-                  instanceId="saved-address-select"
-                  options={addressOptions}
-                  value={selectedSavedAddress}
-                  onChange={handleSelectSavedAddress}
-                  isSearchable
-                  isClearable
-                  placeholder="Chọn địa chỉ đã lưu..."
-                  isLoading={loadingAddresses}
-                  className="react-select-container"
-                  classNamePrefix="react-select"
-                  noOptionsMessage={() => "Không có địa chỉ nào"}
-                />
-                <p className="text-xs text-[#74787c] mt-2">
-                  Hoặc nhập thông tin mới bên dưới
-                </p>
+                <Select instanceId="saved-address-select" options={addressOptions} value={selectedSavedAddress} onChange={handleSelectSavedAddress} isSearchable isClearable placeholder="Chọn địa chỉ đã lưu..." isLoading={loadingAddresses} className="react-select-container" classNamePrefix="react-select" noOptionsMessage={() => "Không có địa chỉ nào"} />
+                <p className="text-xs text-[#74787c] mt-2">Hoặc nhập thông tin mới bên dưới</p>
               </div>
             )}
 
@@ -472,10 +459,6 @@ export default function CheckoutPage() {
               <div className="flex justify-between items-center">
                 <span className="text-sm">Phí vận chuyển:</span>
                 <span className="font-medium">{formatPrice(shippingFee)}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm">Giảm giá:</span>
-                <span className="font-medium text-[#980b15]">-{formatPrice(discount)}</span>
               </div>
               <div className="flex justify-between items-center pt-3 border-t-2 border-[#111111]">
                 <span className="text-lg font-bold">Tổng cộng:</span>

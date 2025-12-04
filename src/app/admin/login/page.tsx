@@ -49,8 +49,8 @@ export default function AdminLoginPage() {
 
       // Redirect đến trang admin dashboard - dùng replace để không thể back lại
       setTimeout(() => {
-        router.replace("/admin/dashboard");
-      }, 500);
+        router.push("/admin/dashboard");
+      }, 1500);
     } catch (error: any) {
       console.error("❌ Login error:", error);
       console.error("Error details:", {
