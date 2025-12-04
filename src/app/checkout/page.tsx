@@ -36,7 +36,7 @@ interface District {
 }
 
 export default function CheckoutPage() {
-  const { items, getTotalPrice } = useCart();
+  const { items, getTotalPrice, updateQuantity } = useCart();
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -53,7 +53,6 @@ export default function CheckoutPage() {
     district: "",
     address: "",
     note: "",
-    voucher: "",
   });
 
   useEffect(() => {
@@ -148,7 +147,6 @@ export default function CheckoutPage() {
         address: formData.address,
       },
       note: formData.note || "",
-      voucherCode: formData.voucher || "",
       totalPrice,
       shippingFee,
       discount,
@@ -274,22 +272,52 @@ export default function CheckoutPage() {
                 const customizationPrice = item.customization?.price || 0;
                 const totalItemPrice = (itemPrice + customizationPrice) * item.quantity;
 
+                const handleQuantityChange = (newQuantity: number) => {
+                  if (newQuantity >= 1) {
+                    updateQuantity(item.id, newQuantity);
+                  }
+                };
+
                 return (
                   <div key={`${item.id}-${item.customization?.type || "none"}`} className="flex gap-3 pb-3 border-b border-[#ebebeb]">
                     <div className="relative w-16 h-16 flex-shrink-0">
                       <Image src={item.image} alt={item.name} fill className="object-cover rounded" />
-                      <span className="absolute -top-2 -right-2 bg-[#980b15] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{item.quantity}</span>
                     </div>
                     <div className="flex-1">
                       <h4 className="font-semibold text-sm">{item.name}</h4>
-                      <p className="text-xs text-[#74787c]">
-                        {item.price} x {item.quantity}
-                      </p>
+                      <p className="text-xs text-[#74787c] mb-1">{item.price}</p>
                       {item.customization && (
                         <p className="text-xs text-[#980b15]">
                           + {formatPrice(item.customization.price)} ({item.customization.type})
                         </p>
                       )}
+                      {/* Quantity controls */}
+                      <div className="flex items-center gap-1 mt-2">
+                        <button
+                          onClick={() => handleQuantityChange(item.quantity - 1)}
+                          className="w-6 h-6 flex items-center justify-center bg-[#f2f2f2] rounded text-sm font-medium hover:bg-[#e0e0e0] transition-colors"
+                        >
+                          -
+                        </button>
+                        <input
+                          type="number"
+                          min="1"
+                          value={item.quantity}
+                          onChange={(e) => {
+                            const val = parseInt(e.target.value);
+                            if (!isNaN(val) && val >= 1) {
+                              handleQuantityChange(val);
+                            }
+                          }}
+                          className="w-12 h-6 text-center text-sm border border-[#e0e0e0] rounded focus:outline-none focus:border-[#980b15]"
+                        />
+                        <button
+                          onClick={() => handleQuantityChange(item.quantity + 1)}
+                          className="w-6 h-6 flex items-center justify-center bg-[#f2f2f2] rounded text-sm font-medium hover:bg-[#e0e0e0] transition-colors"
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
                     <div className="text-right">
                       <p className="font-semibold">{formatPrice(totalItemPrice)}</p>
@@ -297,14 +325,6 @@ export default function CheckoutPage() {
                   </div>
                 );
               })}
-            </div>
-
-            {/* Voucher */}
-            <div className="mb-6">
-              <div className="flex gap-2">
-                <Input name="voucher" value={formData.voucher} onChange={handleInputChange} placeholder="Mã giảm giá" className="bg-[#f2f2f2] border-none flex-1" />
-                <Button className="bg-[#111111] hover:bg-[#000000] text-white px-6">ÁP DỤNG</Button>
-              </div>
             </div>
 
             {/* Price Summary */}
