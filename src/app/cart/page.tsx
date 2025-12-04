@@ -106,7 +106,18 @@ export default function CartPage() {
                   <Button onClick={() => updateQuantity(item.id, item.quantity - 1)} variant="outline" size="sm" className="bg-[#111111] text-white border-none hover:bg-[#000000] h-8 w-8 p-0">
                     -
                   </Button>
-                  <span className="w-8 text-center font-medium">{item.quantity}</span>
+                  <input
+                    type="number"
+                    min="1"
+                    value={item.quantity}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value);
+                      if (!isNaN(val) && val >= 1) {
+                        updateQuantity(item.id, val);
+                      }
+                    }}
+                    className="w-14 h-8 text-center font-medium border border-[#d9d9d9] rounded focus:outline-none focus:border-[#980b15]"
+                  />
                   <Button onClick={() => updateQuantity(item.id, item.quantity + 1)} variant="outline" size="sm" className="bg-[#111111] text-white border-none hover:bg-[#000000] h-8 w-8 p-0">
                     +
                   </Button>
