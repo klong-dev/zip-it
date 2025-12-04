@@ -12,10 +12,19 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import Select from "react-select";
 import provincesData from "@/lib/vietnam-provinces.json";
+import { userAPI, UserAddress } from "@/lib/apiService";
+import { useUserStore } from "@/stores/user-store";
+import { MapPin } from "lucide-react";
 
 interface OptionType {
   value: string;
   label: string;
+}
+
+interface AddressOption {
+  value: number;
+  label: string;
+  address: UserAddress;
 }
 
 interface Province {
@@ -38,12 +47,18 @@ interface District {
 export default function CheckoutPage() {
   const { items, getTotalPrice, updateQuantity } = useCart();
   const router = useRouter();
+  const { user, initialize } = useUserStore();
   const [isProcessing, setIsProcessing] = useState(false);
 
   const [provinces, setProvinces] = useState<OptionType[]>([]);
   const [districts, setDistricts] = useState<OptionType[]>([]);
   const [selectedProvince, setSelectedProvince] = useState<OptionType | null>(null);
   const [selectedDistrict, setSelectedDistrict] = useState<OptionType | null>(null);
+
+  // Saved addresses
+  const [savedAddresses, setSavedAddresses] = useState<UserAddress[]>([]);
+  const [selectedSavedAddress, setSelectedSavedAddress] = useState<AddressOption | null>(null);
+  const [loadingAddresses, setLoadingAddresses] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -54,6 +69,42 @@ export default function CheckoutPage() {
     address: "",
     note: "",
   });
+
+  // Initialize auth
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
+
+  // Load saved addresses if user is logged in
+  useEffect(() => {
+    const loadSavedAddresses = async () => {
+      if (!user) return;
+      
+      setLoadingAddresses(true);
+      try {
+        const response = await userAPI.getAddresses();
+        if (response.data?.addresses) {
+          setSavedAddresses(response.data.addresses);
+          
+          // Auto-select default address
+          const defaultAddress = response.data.addresses.find(addr => addr.is_default);
+          if (defaultAddress) {
+            handleSelectSavedAddress({
+              value: defaultAddress.id,
+              label: `${defaultAddress.full_name} - ${defaultAddress.address}`,
+              address: defaultAddress
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Error loading addresses:", error);
+      } finally {
+        setLoadingAddresses(false);
+      }
+    };
+
+    loadSavedAddresses();
+  }, [user]);
 
   useEffect(() => {
     const provinceOptions = provincesData.map((p) => ({
@@ -72,16 +123,67 @@ export default function CheckoutPage() {
     return new Intl.NumberFormat("vi-VN").format(price) + "đ";
   };
 
+  // Handle selecting a saved address
+  const handleSelectSavedAddress = (option: AddressOption | null) => {
+    setSelectedSavedAddress(option);
+    
+    if (option) {
+      const addr = option.address;
+      
+      // Update form data
+      setFormData({
+        ...formData,
+        name: addr.full_name,
+        phone: addr.phone,
+        province: addr.province,
+        district: addr.district,
+        address: addr.address,
+      });
+
+      // Update province select
+      const provinceOption = provinces.find(p => p.label === addr.province);
+      if (provinceOption) {
+        setSelectedProvince(provinceOption);
+        
+        // Load districts for this province
+        const selectedProvinceData = provincesData.find((p) => p.codename === provinceOption.value);
+        const districtOptions = selectedProvinceData?.wards.map((d) => ({
+          value: d.codename,
+          label: d.name,
+        })) || [];
+        setDistricts(districtOptions);
+        
+        // Update district select
+        const districtOption = districtOptions.find(d => d.label === addr.district);
+        if (districtOption) {
+          setSelectedDistrict(districtOption);
+        }
+      }
+    }
+  };
+
+  // Convert saved addresses to select options
+  const addressOptions: AddressOption[] = savedAddresses.map(addr => ({
+    value: addr.id,
+    label: `${addr.full_name} - ${addr.phone} - ${addr.address}, ${addr.district}, ${addr.province}${addr.is_default ? ' (Mặc định)' : ''}`,
+    address: addr
+  }));
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+    // Clear selected saved address when user manually edits
+    if (selectedSavedAddress) {
+      setSelectedSavedAddress(null);
+    }
   };
 
   const handleProvinceChange = (option: OptionType | null) => {
     setSelectedProvince(option);
     setSelectedDistrict(null);
+    setSelectedSavedAddress(null); // Clear saved address selection
 
     setFormData({
       ...formData,
@@ -221,6 +323,46 @@ export default function CheckoutPage() {
           {/* Left Column - Customer Info Form */}
           <div>
             <h2 className="text-xl font-bold mb-6 border-b-2 border-[#111111] pb-2">THÔNG TIN GIAO HÀNG</h2>
+            
+            {/* Saved Addresses Section */}
+            {user && savedAddresses.length > 0 && (
+              <div className="mb-6 p-4 bg-[#f8f8f8] rounded-lg border border-[#e0e0e0]">
+                <div className="flex items-center gap-2 mb-3">
+                  <MapPin className="w-5 h-5 text-[#980b15]" />
+                  <label className="text-sm font-semibold text-[#980b15]">Chọn từ sổ địa chỉ:</label>
+                </div>
+                <Select
+                  instanceId="saved-address-select"
+                  options={addressOptions}
+                  value={selectedSavedAddress}
+                  onChange={handleSelectSavedAddress}
+                  isSearchable
+                  isClearable
+                  placeholder="Chọn địa chỉ đã lưu..."
+                  isLoading={loadingAddresses}
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                  noOptionsMessage={() => "Không có địa chỉ nào"}
+                />
+                <p className="text-xs text-[#74787c] mt-2">
+                  Hoặc nhập thông tin mới bên dưới
+                </p>
+              </div>
+            )}
+
+            {/* Show link to add address if user is logged in but has no addresses */}
+            {user && savedAddresses.length === 0 && !loadingAddresses && (
+              <div className="mb-6 p-4 bg-[#fff3cd] rounded-lg border border-[#ffc107]">
+                <p className="text-sm text-[#856404]">
+                  <MapPin className="w-4 h-4 inline mr-1" />
+                  Bạn chưa có địa chỉ nào được lưu.{" "}
+                  <Link href="/addresses" className="font-semibold underline hover:text-[#980b15]">
+                    Thêm địa chỉ mới
+                  </Link>
+                </p>
+              </div>
+            )}
+
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-2 text-[#980b15]">
